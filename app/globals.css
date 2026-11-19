@@ -1,0 +1,9 @@
+:root {
+  --bg: #131517; --ink: #d9d9d9; --green: #22c55e; --cyan: #22d3ee; --deep: #0c0e0f; --alt: #16191b;
+  --sans: "Space Grotesk", system-ui, sans-serif; --mono: "JetBrains Mono", ui-monospace, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: #06080a; color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+::selection { background: var(--green); color: var(--deep); }
