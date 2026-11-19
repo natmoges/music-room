@@ -1,0 +1,18 @@
+.wrap { position: relative; width: min(46vmin, 460px); aspect-ratio: 1; display: grid; place-items: center; }
+.planet { all: unset; cursor: pointer; width: 64%; aspect-ratio: 1; border-radius: 50%; position: relative; overflow: hidden;
+  background: radial-gradient(circle at 34% 30%, #5eead4 0%, #14b8a6 22%, #0f766e 48%, #083b3a 74%, #031516 100%);
+  box-shadow: 0 0 60px rgba(34, 211, 238, 0.25), inset -24px -30px 60px rgba(0, 0, 0, 0.7);
+  transition: transform 400ms ease, box-shadow 400ms ease; }
+.planet:hover, .planet:focus-visible { transform: scale(1.03); box-shadow: 0 0 90px rgba(34, 211, 238, 0.4), inset -24px -30px 60px rgba(0, 0, 0, 0.7); }
+.planet:focus-visible { outline: 1px solid var(--cyan); outline-offset: 10px; }
+.rings { position: absolute; inset: 0; border-radius: 50%;
+  background: repeating-radial-gradient(circle at 60% 55%, transparent 0 9px, rgba(204, 251, 241, 0.09) 9px 10px);
+  animation: spin 60s linear infinite; }
+.playing .rings { animation-duration: 12s; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.orbit { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.orbit ellipse { fill: none; stroke: rgba(217, 217, 217, 0.35); stroke-width: 1; }
+.sat { fill: #e5e7eb; filter: drop-shadow(0 0 6px #22d3ee); }
+.label { position: absolute; bottom: -6%; left: 0; right: 0; display: flex; justify-content: space-between; margin: 0; font: 10px/1 var(--mono); letter-spacing: 0.18em; color: rgba(217, 217, 217, 0.5); }
+@media (prefers-reduced-motion: reduce) { .rings { animation: none; } .orbit circle { display: none; } }
+@media (max-width: 760px) { .label { bottom: -4%; font-size: 9px; letter-spacing: 0.14em; } .label span:last-child { display: none; } .label { justify-content: center; } }

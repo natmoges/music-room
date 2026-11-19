@@ -1,0 +1,6 @@
+.screen { position: fixed; inset: 0; z-index: 50; background: #040608; pointer-events: none; animation: off 300ms ease-in 1100ms forwards; }
+.line { position: absolute; inset: 0; background: #d9ffe8; box-shadow: 0 0 24px #22c55e; transform: scale(0, 0.003); animation: on 520ms ease-out forwards; }
+.text { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); margin: 0; color: #22c55e; font: 12px/1.7 var(--mono); opacity: 0; animation: print 400ms steps(4) 500ms forwards; text-shadow: 2px 0 rgba(34, 211, 238, 0.6), -2px 0 rgba(255, 0, 80, 0.35); }
+@keyframes on { 55% { transform: scale(1, 0.003); opacity: 1; } 70% { transform: scale(1, 0.04); opacity: 0.5; } 100% { transform: scale(1, 1); opacity: 0.05; } }
+@keyframes print { to { opacity: 1; } }
+@keyframes off { to { opacity: 0; } }
