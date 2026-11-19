@@ -1,6 +1,6 @@
 .room { position: relative; min-height: 100dvh; overflow: hidden; }
 .stage { position: relative; z-index: 1; min-height: 100dvh; display: grid; grid-template-columns: 1fr minmax(0, 460px); align-items: center; gap: 4vw; padding: 24px clamp(16px, 5vw, 72px); box-sizing: border-box; }
-.planetSlot { display: grid; place-items: center; transform: scale(0.9); opacity: 0; transition: transform 1200ms cubic-bezier(.2, .8, .2, 1), opacity 900ms ease; }
+.planetSlot { display: grid; place-items: center; align-content: center; transform: scale(0.9); opacity: 0; transition: transform 1200ms cubic-bezier(.2, .8, .2, 1), opacity 900ms ease; }
 .landed .planetSlot, .room:not(.landed) .planetSlot { opacity: 1; transform: none; }
 .hold { position: fixed; inset: 0; z-index: 50; background: #040608; }
 .blink { position: fixed; inset: 0; z-index: 50; background: #040608; animation: blink 250ms steps(2) forwards; }

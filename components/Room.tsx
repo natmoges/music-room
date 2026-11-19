@@ -23,11 +23,12 @@
   everything bends toward browsing the catalog and acting on it.
 */
 import { useCallback, useEffect, useState } from "react";
-import { type Beat, storeUrl } from "@/lib/catalog";
+import { type Beat, artUrl, storeUrl } from "@/lib/catalog";
 import Hyperspace from "./Hyperspace";
 import CrtBoot from "./CrtBoot";
 import Starfield from "./Starfield";
 import Planet from "./Planet";
+import Masthead from "./Masthead";
 import Hud from "./Hud";
 import styles from "./Room.module.css";
 
@@ -98,7 +99,8 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
       <Starfield reduced={reduced} />
       <div className={styles.stage}>
         <div className={styles.planetSlot}>
-          <Planet onJump={jump} playing={!!selected} />
+          <Masthead locked={phase === "landed"} />
+          <Planet onJump={jump} art={selected ? artUrl(selected) || "none" : null} />
         </div>
         {phase !== "arriving" && (
           <Hud beats={beats} selected={selected} lost={isLost} onSelect={select} onLaunch={onLaunch} onJump={jump} />
