@@ -1,9 +1,884 @@
 [
-  {"id":"7378488","slug":"free-bobby-shmurda-type-beat-2021-day-one","title":"[FREE] Bobby Shmurda Type Beat 2021 Day One","art":"TK7378488/ih27f72ms.jpg","free":true},
-  {"id":"7322199","slug":"free-tee-grizzley-x-meek-mill-type-beat-ride","title":"[FREE] Tee Grizzley x Meek Mill Type Beat Ride","art":"TK7322199/ih27f5xys.jpg","free":false},
-  {"id":"7299860","slug":"free-chill-lil-tecca-type-beat-away","title":"[FREE] Chill Lil Tecca Type Beat Away","art":"TK7299860/ih27f1iiu.jpg","free":true},
-  {"id":"7276475","slug":"free-lil-uzi-vert-trap-type-beat-universal","title":"[FREE] Lil Uzi vert Trap Type Beat Universal","art":"TK7276475/ih27fqscp.jpg","free":true},
-  {"id":"7223299","slug":"free-philly-drill-type-beat-envy-2021","title":"[FREE] Philly Drill Type Beat Envy 2021","art":"TK7223299/ih27fgeww.jpg","free":true},
-  {"id":"7201410","slug":"free-lil-tecca-x-lil-mosey-type-beat-free","title":"[FREE] Lil Tecca x Lil Mosey Type Beat Free","art":"TK7201410/ih27frywd.jpg","free":true},
-  {"id":"7170479","slug":"free-jadakiss-boom-bap-rnb-type-beat-story","title":"[FREE] Jadakiss Boom Bap RnB Type Beat Story","art":"TK7170479/ih27f4kn2.jpg","free":false}
+ {
+  "id": "7378488",
+  "slug": "free-bobby-shmurda-type-beat-2021-day-one",
+  "title": "[FREE] Bobby Shmurda Type Beat 2021 Day One",
+  "art": "TK7378488/ih27f72ms.jpg",
+  "free": false
+ },
+ {
+  "id": "7322199",
+  "slug": "free-tee-grizzley-x-meek-mill-type-beat-ride",
+  "title": "[FREE] Tee Grizzley x Meek Mill Type Beat Ride",
+  "art": "TK7322199/ih27f5xys.jpg",
+  "free": false
+ },
+ {
+  "id": "7299860",
+  "slug": "free-chill-lil-tecca-type-beat-away",
+  "title": "[FREE] Chill Lil Tecca Type Beat Away",
+  "art": "TK7299860/ih27f1iiu.jpg",
+  "free": false
+ },
+ {
+  "id": "7276475",
+  "slug": "free-lil-uzi-vert-trap-type-beat-universal",
+  "title": "[FREE] Lil Uzi vert Trap Type Beat Universal",
+  "art": "TK7276475/ih27fqscp.jpg",
+  "free": false
+ },
+ {
+  "id": "7223299",
+  "slug": "free-philly-drill-type-beat-envy-2021",
+  "title": "[FREE] Philly Drill Type Beat Envy 2021",
+  "art": "TK7223299/ih27fgeww.jpg",
+  "free": false
+ },
+ {
+  "id": "7201410",
+  "slug": "free-lil-tecca-x-lil-mosey-type-beat-free",
+  "title": "[FREE] Lil Tecca x Lil Mosey Type Beat Free",
+  "art": "TK7201410/ih27frywd.jpg",
+  "free": false
+ },
+ {
+  "id": "7170479",
+  "slug": "free-jadakiss-boom-bap-rnb-type-beat-story",
+  "title": "[FREE] Jadakiss Boom Bap RnB Type Beat Story",
+  "art": "TK7170479/ih27f4kn2.jpg",
+  "free": false
+ },
+ {
+  "id": "7146896",
+  "slug": "free-xxxtentacion-x-lil-baby-type-beat-hold-on",
+  "title": "[FREE] XXXTENTACION x Lil Baby Type Beat Hold On",
+  "art": "TK7146896/ih27far4l.jpg",
+  "free": false
+ },
+ {
+  "id": "7122736",
+  "slug": "free-emotional-trap-type-beat-moved-on-2021",
+  "title": "[FREE] Emotional Trap Type Beat Moved On 2021",
+  "art": "TK7122736/ih27fqhsh.jpg",
+  "free": false
+ },
+ {
+  "id": "7091820",
+  "slug": "free-meek-x-philly-drill-type-beat-warning",
+  "title": "[FREE] Meek x Philly Drill Type Beat Warning",
+  "art": "TK7091820/ih27fodbf.jpg",
+  "free": false
+ },
+ {
+  "id": "7068673",
+  "slug": "free-philly-x-future-trap-type-beat-finale",
+  "title": "[FREE] Philly x Future Trap Type Beat Finale",
+  "art": "TK7068673/ih27fbzbw.jpg",
+  "free": false
+ },
+ {
+  "id": "7043872",
+  "slug": "free-philly-type-rap-beat-reign",
+  "title": "[FREE] Philly Type Rap Beat Reign",
+  "art": "TK7043872/ih27foqsw.jpg",
+  "free": false
+ },
+ {
+  "id": "7015940",
+  "slug": "free-chill-rap-type-beat-keyz-2021",
+  "title": "[FREE] Chill Rap Type Beat Keyz 2021",
+  "art": "TK7015940/ih27fij6h.jpg",
+  "free": false
+ },
+ {
+  "id": "6993551",
+  "slug": "free-lil-baby-type-beat-changed-2021",
+  "title": "[FREE] Lil Baby Type Beat Changed 2021",
+  "art": "TK6993551/ih27fmhl6.jpg",
+  "free": false
+ },
+ {
+  "id": "6968876",
+  "slug": "free-lil-uzi-vert-type-beat-eternal",
+  "title": "[FREE] Lil Uzi Vert Type Beat Eternal",
+  "art": "TK6968876/ih27fsvgo.jpg",
+  "free": false
+ },
+ {
+  "id": "6506643",
+  "slug": "free-lil-baby-x-philly-type-beat-return",
+  "title": "[FREE] Lil Baby x Philly Type Beat Return",
+  "art": "TK6506643/ih27f0bwr.jpg",
+  "free": false
+ },
+ {
+  "id": "6289542",
+  "slug": "free-lil-skies-x-lil-mosey-type-beat-str8-2020",
+  "title": "[FREE] Lil Skies x Lil Mosey Type Beat “Str8” 2020",
+  "art": "TK6289542/ih27fvypf.jpg",
+  "free": true
+ },
+ {
+  "id": "6253469",
+  "slug": "free-hard-rap-type-beat-knights",
+  "title": "[FREE] Hard Rap Type Beat Knights",
+  "art": "TK6253469/ih27fzcjq.jpg",
+  "free": false
+ },
+ {
+  "id": "6234119",
+  "slug": "free-dark-philly-type-beat-freddy",
+  "title": "[FREE] Dark Philly Type Beat Freddy",
+  "art": "TK6234119/ih27foyrx.jpg",
+  "free": false
+ },
+ {
+  "id": "6085067",
+  "slug": "free-d4m-x-dababy-type-beat-run",
+  "title": "[FREE] D4M x DaBaby Type Beat Run",
+  "art": "TK6085067/ih27fcgpz.jpg",
+  "free": false
+ },
+ {
+  "id": "6067743",
+  "slug": "free-meek-mill-type-beat-2020",
+  "title": "[FREE] Meek Mill Type Beat 2020",
+  "art": "TK6067743/ih27fatbo.jpg",
+  "free": false
+ },
+ {
+  "id": "6031870",
+  "slug": "free-tee-grizzley-type-beat-out",
+  "title": "[FREE] Tee Grizzley Type Beat Out",
+  "art": "TK6031870/ih27fizbh.jpg",
+  "free": true
+ },
+ {
+  "id": "6015528",
+  "slug": "free-philly-freestyle-type-beat-return",
+  "title": "[FREE] Philly Freestyle Type Beat Return",
+  "art": "TK6015528/ih27fgu0j.jpg",
+  "free": false
+ },
+ {
+  "id": "5998360",
+  "slug": "free-bryson-tiller-x-the-weeknd-type-beat-young",
+  "title": "[FREE] Bryson Tiller x The Weeknd Type Beat Young",
+  "art": "TK5998360/ih27fnwvt.jpg",
+  "free": false
+ },
+ {
+  "id": "5991011",
+  "slug": "free-brygreatah-x-lil-mosey-type-beat-mine",
+  "title": "[FREE] Brygreatah x Lil Mosey Type Beat Mine",
+  "art": "TK5991011/ih27foqwh.jpg",
+  "free": false
+ },
+ {
+  "id": "5973996",
+  "slug": "free-fivio-foreign-drill-type-beat-drip",
+  "title": "[FREE] Fivio Foreign Drill Type Beat Drip",
+  "art": "TK5973996/ih27f1lgv.jpg",
+  "free": false
+ },
+ {
+  "id": "5954243",
+  "slug": "free-meek-mill-boom-bap-type-beat-soul",
+  "title": "[FREE] Meek Mill Boom Bap Type Beat Soul",
+  "art": "TK5954243/ih27fd9ja.jpg",
+  "free": false
+ },
+ {
+  "id": "5947391",
+  "slug": "free-lil-uzi-vert-spacey-type-beat-mars",
+  "title": "[FREE] Lil Uzi Vert Spacey Type Beat Mars",
+  "art": "TK5947391/ih27fdrcm.jpg",
+  "free": false
+ },
+ {
+  "id": "5903591",
+  "slug": "free-zahsosaa-x-brygreatah-philly-type-beat-hidden",
+  "title": "[FREE] Zahsosaa x Brygreatah Philly Type Beat Hidden",
+  "art": "TK5903591/ih27fcfyg.jpg",
+  "free": false
+ },
+ {
+  "id": "5894455",
+  "slug": "free-brygreatah-type-beat-trust-philly-type-beat",
+  "title": "[FREE] Brygreatah Type Beat Trust | Philly Type Beat",
+  "art": "TK5894455/ih27fgmqy.jpg",
+  "free": false
+ },
+ {
+  "id": "5877959",
+  "slug": "free-meek-mill-old-school-type-beat-city",
+  "title": "[FREE] Meek Mill Old School Type Beat City",
+  "art": "TK5877959/ih27fckkc.jpg",
+  "free": false
+ },
+ {
+  "id": "5877950",
+  "slug": "free-brygreatah-type-beat-twisted",
+  "title": "[FREE] Brygreatah Type Beat Twisted",
+  "art": "TK5877950/ih27fgkyu.jpg",
+  "free": false
+ },
+ {
+  "id": "5862744",
+  "slug": "free-lil-baby-x-brygreatah-type-beat-paid",
+  "title": "[FREE] Lil Baby x Brygreatah Type Beat Paid",
+  "art": "TK5862744/ih27fpuml.jpg",
+  "free": false
+ },
+ {
+  "id": "5862732",
+  "slug": "free-brygreatah-x-nba-youngboy-type-beat-top",
+  "title": "[FREE] Brygreatah x NBA YoungBoy Type Beat Top",
+  "art": "TK5862732/ih27fipjn.jpg",
+  "free": false
+ },
+ {
+  "id": "5835786",
+  "slug": "free-zahsosaa-type-beat-poetic-chaos",
+  "title": "[FREE] Zahsosaa Type Beat Poetic Chaos",
+  "art": "TK5835786/ih27fa7sx.jpg",
+  "free": false
+ },
+ {
+  "id": "5835764",
+  "slug": "free-brygreatah-type-beat-poetic-tears",
+  "title": "[FREE] Brygreatah Type Beat Poetic Tears",
+  "art": "TK5835764/ih27fjrvy.jpg",
+  "free": false
+ },
+ {
+  "id": "5835728",
+  "slug": "free-brygreatah-type-beat-poetic-pain",
+  "title": "[FREE] Brygreatah Type Beat Poetic Pain",
+  "art": "TK5835728/ih27fcpof.jpg",
+  "free": false
+ },
+ {
+  "id": "5825388",
+  "slug": "free-blueface-x-flight-reacts-type-beat-buss-down",
+  "title": "[FREE] Blueface x Flight Reacts Type Beat Buss Down",
+  "art": "TK5825388/ih27ffmuy.jpg",
+  "free": false
+ },
+ {
+  "id": "5817650",
+  "slug": "free-d4m-x-meek-type-beat-shining",
+  "title": "[FREE] D4M x Meek Type Beat Shining",
+  "art": "TK5817650/ih27fdixg.jpg",
+  "free": false
+ },
+ {
+  "id": "5801663",
+  "slug": "free-meek-mill-type-beat-solo",
+  "title": "[FREE] Meek Mill Type Beat Solo",
+  "art": "TK5801663/ih27f0c1c.jpg",
+  "free": false
+ },
+ {
+  "id": "5771792",
+  "slug": "free-simxsantana-x-100deek-x-d4m-type-beat-sturdy",
+  "title": "[FREE] SimxSantana x 100Deek x D4M Type Beat Sturdy",
+  "art": "TK5771792/ih27f8w3b.jpg",
+  "free": false
+ },
+ {
+  "id": "5771783",
+  "slug": "free-100deek-x-d4m-x-simxsantana-type-beat-opps",
+  "title": "[FREE] 100Deek x D4M x SimxSantana Type Beat Opps",
+  "art": "TK5771783/ih27fg1mj.jpg",
+  "free": false
+ },
+ {
+  "id": "5771760",
+  "slug": "free-simxsantana-x-d4m-type-beat-different",
+  "title": "[FREE] SimxSantana x D4M Type Beat Different",
+  "art": "TK5771760/ih27fhorq.jpg",
+  "free": false
+ },
+ {
+  "id": "5755673",
+  "slug": "free-meek-mill-type-beat-projects",
+  "title": "[FREE] Meek Mill Type Beat Projects",
+  "art": "TK5755673/ih27frbf9.jpg",
+  "free": false
+ },
+ {
+  "id": "5755661",
+  "slug": "free-meek-mill-type-beat-one",
+  "title": "[FREE] Meek Mill Type Beat One",
+  "art": "TK5755661/ih27fgci6.jpg",
+  "free": false
+ },
+ {
+  "id": "5730510",
+  "slug": "free-zahsosaa-x-brygreatah-type-beat-remember",
+  "title": "[FREE] Zahsosaa x Brygreatah Type Beat Remember",
+  "art": "TK5730510/ih27fvf9v.jpg",
+  "free": false
+ },
+ {
+  "id": "5730397",
+  "slug": "free-meek-mill-type-beat-faded",
+  "title": "[FREE] Meek Mill Type Beat Faded",
+  "art": "TK5730397/ih27fdqhw.jpg",
+  "free": false
+ },
+ {
+  "id": "5721365",
+  "slug": "free-meek-mill-type-beat-toxic",
+  "title": "[FREE] Meek Mill Type Beat Toxic",
+  "art": "TK5721365/ih27fkqpp.jpg",
+  "free": true
+ },
+ {
+  "id": "5702126",
+  "slug": "free-meek-mill-type-beat-grind",
+  "title": "[FREE] Meek Mill Type Beat Grind",
+  "art": "TK5702126/ih27fxuus.jpg",
+  "free": false
+ },
+ {
+  "id": "5648600",
+  "slug": "free-d4m-skiano-x-dollarsloan-type-beat-demons",
+  "title": "[FREE] D4M Skiano x $loan Type Beat Demons",
+  "art": "TK5648600/ih27ff963.jpg",
+  "free": false
+ },
+ {
+  "id": "5641186",
+  "slug": "free-meek-mill-type-beat-cold-philly-type-beat-2020",
+  "title": "[FREE] Meek Mill Type Beat Cold | Philly Type Beat 2020",
+  "art": "TK5641186/ih27fvboe.jpg",
+  "free": false
+ },
+ {
+  "id": "5641165",
+  "slug": "free-brygreatah-type-beat-love-philly-type-beat-2020",
+  "title": "[FREE] Brygreatah Type Beat “Love” | Philly Type Beat 2020",
+  "art": "TK5641165/ih27f3tgu.jpg",
+  "free": false
+ },
+ {
+  "id": "5641142",
+  "slug": "free-meek-mill-type-beat-hype-philly-type-beat-2020",
+  "title": "[FREE] Meek Mill Type Beat Hype | Philly Type Beat 2020",
+  "art": "TK5641142/ih27f6jxo.jpg",
+  "free": false
+ },
+ {
+  "id": "5631440",
+  "slug": "free-philly-brygreatah-type-beat-ready",
+  "title": "[FREE] Philly Brygreatah Type Beat Ready",
+  "art": "TK5631440/ih27fibdb.jpg",
+  "free": false
+ },
+ {
+  "id": "5623272",
+  "slug": "free-meek-mill-x-d4m-type-beat-war",
+  "title": "[FREE] Meek Mill x D4M Type Beat War",
+  "art": "TK5623272/ih27fatzm.jpg",
+  "free": false
+ },
+ {
+  "id": "5607353",
+  "slug": "free-summer-walker-x-6lack-type-beat-feelings",
+  "title": "[FREE] Summer Walker x 6lack Type Beat Feelings",
+  "art": "TK5607353/ih27fyirp.jpg",
+  "free": false
+ },
+ {
+  "id": "5596134",
+  "slug": "free-meek-mill-type-beat-option",
+  "title": "[FREE] Meek Mill Type Beat Option",
+  "art": "TK5596134/ih27frue1.jpg",
+  "free": false
+ },
+ {
+  "id": "5568380",
+  "slug": "free-brygreatah-type-beat-again",
+  "title": "[FREE] Brygreatah Type Beat “Again”",
+  "art": "TK5568380/ih27fukih.jpg",
+  "free": false
+ },
+ {
+  "id": "5541707",
+  "slug": "free-brygreatah-type-beat-faded",
+  "title": "[FREE] Brygreatah Type Beat “Faded”",
+  "art": "TK5541707/ih27fwsoa.jpg",
+  "free": false
+ },
+ {
+  "id": "5532756",
+  "slug": "free-meek-mill-type-beat-streets",
+  "title": "[FREE] Meek Mill Type Beat Streets",
+  "art": "TK5532756/ih27fzbck.jpg",
+  "free": false
+ },
+ {
+  "id": "5514522",
+  "slug": "free-brygreatah-type-beat-hurt",
+  "title": "[FREE] Brygreatah Type Beat “Hurt”",
+  "art": "TK5514522/ih27foj3c.jpg",
+  "free": false
+ },
+ {
+  "id": "5506793",
+  "slug": "free-meek-mill-type-beat-hustle",
+  "title": "[FREE] Meek Mill Type Beat Hustle",
+  "art": "TK5506793/ih27ffahv.jpg",
+  "free": false
+ },
+ {
+  "id": "5498076",
+  "slug": "free-drama-b2r-x-nba-youngboy-type-beat-hours",
+  "title": "[FREE] Drama B2R x NBA YoungBoy Type Beat Hours",
+  "art": "TK5498076/ih27ftqfl.jpg",
+  "free": false
+ },
+ {
+  "id": "5489698",
+  "slug": "free-100deek-x-d4m-type-beat-savage",
+  "title": "[FREE] 100Deek x D4M Type Beat Savage",
+  "art": "TK5489698/ih27f9mge.jpg",
+  "free": false
+ },
+ {
+  "id": "5460305",
+  "slug": "free-simxsantanna-x-d4m-type-beat-flexin",
+  "title": "[FREE] SimXSantanna x D4M Type Beat Flexin",
+  "art": "TK5460305/ih27f8ueu.jpg",
+  "free": false
+ },
+ {
+  "id": "5427082",
+  "slug": "free-meek-mill-type-beat-dreams-and-nightmares",
+  "title": "[FREE] Meek Mill Type Beat Dreams & Nightmares",
+  "art": "TK5427082/ih27fcyqh.jpg",
+  "free": false
+ },
+ {
+  "id": "5402301",
+  "slug": "free-d4m-skiano-x-dollarsloan-type-beat-dior",
+  "title": "[FREE] D4M Skiano x $loan Type Beat Dior",
+  "art": "TK5402301/ih27fda86.jpg",
+  "free": false
+ },
+ {
+  "id": "5395894",
+  "slug": "free-brygreatah-type-beat-together-2020",
+  "title": "[FREE] Brygreatah Type Beat Together  2020",
+  "art": "TK5395894/ih27fjps4.jpg",
+  "free": false
+ },
+ {
+  "id": "5387781",
+  "slug": "free-philly-freestyle-type-beat-cycle-2020",
+  "title": "[FREE] Philly Freestyle Type Beat Cycle 2020",
+  "art": "TK5387781/ih27fx2ng.jpg",
+  "free": false
+ },
+ {
+  "id": "5132919",
+  "slug": "free-king-von-x-chopsquad-type-beat-decieved",
+  "title": "[FREE] King Von x Chopsquad Type Beat Decieved",
+  "art": "TK5132919/ih27fankz.jpg",
+  "free": false
+ },
+ {
+  "id": "5132782",
+  "slug": "free-toosii2x-type-beat-one-chance",
+  "title": "[FREE] Toosii2x Type Beat One Chance",
+  "art": "TK5132782/ih27fxoe1.jpg",
+  "free": false
+ },
+ {
+  "id": "5132696",
+  "slug": "free-king-von-x-chopsquad-type-beat-power",
+  "title": "[FREE] King Von x Chopsquad Type Beat Power",
+  "art": "TK5132696/ih27fyuu4.jpg",
+  "free": false
+ },
+ {
+  "id": "5132666",
+  "slug": "free-toosii2x-type-beat-promises-2020",
+  "title": "[FREE] Toosii2x Type Beat Promises 2020",
+  "art": "TK5132666/ih27fgzvb.jpg",
+  "free": false
+ },
+ {
+  "id": "5063162",
+  "slug": "free-toosii2x-type-beat-days-2020",
+  "title": "[FREE] Toosii2x Type Beat Days 2020",
+  "art": "TK5063162/ih27fmlgl.jpg",
+  "free": false
+ },
+ {
+  "id": "5063142",
+  "slug": "free-toosii2x-type-beat-faces-2020",
+  "title": "[FREE] Toosii2x Type Beat Faces 2020",
+  "art": "TK5063142/ih27fvtdb.jpg",
+  "free": false
+ },
+ {
+  "id": "5063124",
+  "slug": "free-toosii2x-type-beat-forever-2020",
+  "title": "[FREE] Toosii2x Type Beat Forever 2020",
+  "art": "TK5063124/ih27fpayh.jpg",
+  "free": false
+ },
+ {
+  "id": "5063107",
+  "slug": "free-king-von-x-chopsquad-type-beat-heist-2020",
+  "title": "[FREE] King Von x Chopsquad Type Beat Heist 2020",
+  "art": "TK5063107/ih27fiset.jpg",
+  "free": false
+ },
+ {
+  "id": "5063088",
+  "slug": "free-king-von-x-chopsquad-type-beat-chapo-2020",
+  "title": "[FREE] King Von x Chopsquad Type Beat Chapo 2020",
+  "art": "TK5063088/ih27fsbgs.jpg",
+  "free": false
+ },
+ {
+  "id": "5063030",
+  "slug": "free-toosii2x-type-beat-alone-2020",
+  "title": "[FREE] Toosii2x Type Beat Alone 2020",
+  "art": "TK5063030/ih27fklor.jpg",
+  "free": false
+ },
+ {
+  "id": "5063018",
+  "slug": "free-freestyle-friday-type-beat-foreign-2020",
+  "title": "[FREE] Freestyle Friday Type Beat Foreign 2020",
+  "art": "TK5063018/ih27fvy5z.jpg",
+  "free": false
+ },
+ {
+  "id": "5063003",
+  "slug": "free-toosii2x-type-beat-changes-2020",
+  "title": "[FREE] Toosii2x Type Beat Changes 2020",
+  "art": "TK5063003/ih27fok0a.jpg",
+  "free": false
+ },
+ {
+  "id": "5062978",
+  "slug": "free-toosii2x-type-beat-endless-nights-2020",
+  "title": "[FREE] Toosii2x Type Beat Endless Nights 2020",
+  "art": "TK5062978/ih27fj0ka.jpg",
+  "free": false
+ },
+ {
+  "id": "5062967",
+  "slug": "free-2kbaby-type-beat-memories-2020",
+  "title": "[FREE] 2kBaby Type Beat Memories 2020",
+  "art": "TK5062967/ih27fw2u1.jpg",
+  "free": false
+ },
+ {
+  "id": "5062946",
+  "slug": "free-freestyle-friday-type-beat-journey-2020",
+  "title": "[FREE] Freestyle Friday Type Beat Journey 2020",
+  "art": "TK5062946/ih27f0ww0.jpg",
+  "free": false
+ },
+ {
+  "id": "5062896",
+  "slug": "free-freestyle-friday-type-beat-freedom-2020",
+  "title": "[FREE] Freestyle Friday Type Beat Freedom 2020",
+  "art": "TK5062896/ih27fpp6k.jpg",
+  "free": false
+ },
+ {
+  "id": "5062740",
+  "slug": "free-king-von-x-chopsquad-type-beat-focus-2020",
+  "title": "[FREE] King Von x Chopsquad Type Beat Focus 2020",
+  "art": "TK5062740/ih27f4apr.jpg",
+  "free": false
+ },
+ {
+  "id": "5062715",
+  "slug": "free-toosii2x-type-beat-chosen-2020",
+  "title": "[FREE] Toosii2x Type Beat Chosen 2020",
+  "art": "TK5062715/ih27fs5rh.jpg",
+  "free": false
+ },
+ {
+  "id": "5062277",
+  "slug": "free-toosii2x-type-beat-soul-2020",
+  "title": "[FREE] Toosii2x Type Beat Soul 2020",
+  "art": "TK5062277/ih27fyyo3.jpg",
+  "free": false
+ },
+ {
+  "id": "12971342",
+  "slug": "free-rod-wave-rnb-type-beat-connections",
+  "title": "[FREE] Rod Wave RnB Type Beat Connections",
+  "art": "TK12971342/artwork.jpg",
+  "free": false
+ },
+ {
+  "id": "12849986",
+  "slug": "lil-baby-type-beat-heated-2022",
+  "title": "Lil Baby Type Beat Heated 2022",
+  "art": "TK12849986/artwork.jpg",
+  "free": false
+ },
+ {
+  "id": "7520965",
+  "slug": "free-meek-mill-x-tee-grizzley-type-beat-scary-hours",
+  "title": "[FREE] Meek Mill x Tee Grizzley Type Beat Scary Hours",
+  "art": "TK7520965/ih27fmiie.jpg",
+  "free": false
+ },
+ {
+  "id": "7472469",
+  "slug": "free-lil-baby-type-beat-ball",
+  "title": "[FREE] Lil Baby Type Beat Ball",
+  "art": "TK7472469/ih27fiors.jpg",
+  "free": false
+ },
+ {
+  "id": "7427933",
+  "slug": "free-tee-grizzley-type-beat-go",
+  "title": "[FREE] Tee Grizzley Type Beat Go",
+  "art": "TK7427933/ih27fp5ew.jpg",
+  "free": false
+ },
+ {
+  "id": "7427925",
+  "slug": "free-rod-wave-x-polo-g-type-beat-chance",
+  "title": "[FREE] Rod Wave x Polo G Type Beat Chance",
+  "art": "TK7427925/ih27fjmrh.jpg",
+  "free": false
+ },
+ {
+  "id": "7398287",
+  "slug": "free-lil-uzi-vert-type-beat-purple-2021",
+  "title": "[FREE] Lil Uzi Vert Type Beat Purple 2021",
+  "art": "TK7398287/ih27fmbhe.jpg",
+  "free": false
+ },
+ {
+  "id": "5930624",
+  "slug": "free-d4m-x-g19-x-100deek-type-beat-flexin",
+  "title": "[FREE] D4M x G19 x 100Deek Type Beat Flexin",
+  "art": "TK5930624/ih27fnzco.jpg",
+  "free": false
+ },
+ {
+  "id": "5412873",
+  "slug": "free-pnb-rock-type-beat-closer",
+  "title": "[FREE] PnB Rock Type Beat Closer",
+  "art": "TK5412873/ih27fimcb.jpg",
+  "free": false
+ },
+ {
+  "id": "5223421",
+  "slug": "free-d4m-skiano-x-philly-type-beat-silent",
+  "title": "[FREE] D4M Skiano x Philly Type Beat Silent",
+  "art": "TK5223421/ih27fbgwy.jpg",
+  "free": false
+ },
+ {
+  "id": "5062855",
+  "slug": "free-toosii2x-x-d4m-skiano-type-beat-healing-2020",
+  "title": "[FREE] Toosii2x x D4M Skiano Type Beat Healing 2020",
+  "art": "TK5062855/ih27fka51.jpg",
+  "free": false
+ },
+ {
+  "id": "5213555",
+  "slug": "free-d4m-skiano-x-dollarsloan-type-beat-talkin-my-shit",
+  "title": "[FREE] D4M Skiano x $loan Type Beat Talkin My Shit",
+  "art": "TK5213555/ih27fdvuj.jpg",
+  "free": false
+ },
+ {
+  "id": "5205858",
+  "slug": "free-d4m-skiano-x-hard-philly-type-beat-trenches",
+  "title": "[FREE] D4M Skiano x Hard Philly Type Beat Trenches",
+  "art": "TK5205858/ih27fgzwp.jpg",
+  "free": false
+ },
+ {
+  "id": "5063040",
+  "slug": "free-d4m-skiano-x-toosii2x-type-beat-hurt-again-2020",
+  "title": "[FREE] D4M Skiano x Toosii2x Type Beat Hurt Again 2020",
+  "art": "TK5063040/ih27f9dc1.jpg",
+  "free": false
+ },
+ {
+  "id": "5200324",
+  "slug": "free-d4m-skiano-x-philly-type-beat-projects",
+  "title": "[FREE] D4M Skiano x Philly Type Beat Projects",
+  "art": "TK5200324/ih27fb8b8.jpg",
+  "free": false
+ },
+ {
+  "id": "5132837",
+  "slug": "free-toosii2x-type-beat-heart",
+  "title": "[FREE] Toosii2x Type Beat Heart",
+  "art": "TK5132837/ih27ftmoj.jpg",
+  "free": false
+ },
+ {
+  "id": "5132612",
+  "slug": "free-toosii2x-type-beat-control-2020",
+  "title": "[FREE] Toosii2x Type Beat Control 2020",
+  "art": "TK5132612/ih27fbuem.jpg",
+  "free": false
+ },
+ {
+  "id": "5063054",
+  "slug": "free-2kbaby-type-beat-paradise-2020",
+  "title": "[FREE] 2kBaby Type Beat Paradise 2020",
+  "art": "TK5063054/ih27fil3i.jpg",
+  "free": false
+ },
+ {
+  "id": "5063067",
+  "slug": "free-king-von-x-chopsquad-type-beat-ruins-2020",
+  "title": "[FREE] King Von x Chopsquad Type Beat Ruins 2020",
+  "art": "TK5063067/ih27fzyjb.jpg",
+  "free": false
+ },
+ {
+  "id": "5062932",
+  "slug": "free-freestyle-friday-type-beat-roadtrip-2020",
+  "title": "[FREE] Freestyle Friday Type Beat Roadtrip 2020",
+  "art": "TK5062932/ih27fmcjy.jpg",
+  "free": false
+ },
+ {
+  "id": "5063075",
+  "slug": "free-toosii2x-type-beat-storming-2020",
+  "title": "[FREE] Toosii2x Type Beat Storming 2020",
+  "art": "TK5063075/ih27fhzwm.jpg",
+  "free": false
+ },
+ {
+  "id": "5062778",
+  "slug": "free-fgb-duck-x-2kbaby-type-beat-lonely-2020",
+  "title": "[FREE] FGB Duck x 2kBaby Type Beat Lonely 2020",
+  "art": "TK5062778/ih27fbiii.jpg",
+  "free": false
+ },
+ {
+  "id": "5062693",
+  "slug": "free-king-von-x-chopsquad-type-beat-working-2020",
+  "title": "[FREE] King Von x Chopsquad Type Beat Working 2020",
+  "art": "TK5062693/ih27ftycz.jpg",
+  "free": false
+ },
+ {
+  "id": "5062988",
+  "slug": "free-drake-type-beat-penthouse-2020",
+  "title": "[FREE] Drake Type Beat Penthouse 2020",
+  "art": "TK5062988/ih27fkuoo.jpg",
+  "free": false
+ },
+ {
+  "id": "5062438",
+  "slug": "free-drake-type-beat-6ix-2020",
+  "title": "[FREE] Drake Type Beat 6ix 2020",
+  "art": "TK5062438/ih27flc39.jpg",
+  "free": false
+ },
+ {
+  "id": "5062509",
+  "slug": "free-freestyle-friday-type-beat-getaway-2020",
+  "title": "[FREE] Freestyle Friday Type Beat Getaway 2020",
+  "art": "TK5062509/ih27ftznm.jpg",
+  "free": false
+ },
+ {
+  "id": "5062553",
+  "slug": "free-toosii2x-type-beat-visions-2020",
+  "title": "[FREE] Toosii2x Type Beat Visions 2020",
+  "art": "TK5062553/ih27fvsld.jpg",
+  "free": false
+ },
+ {
+  "id": "5062476",
+  "slug": "free-nocap-type-beat-changed-me-2020",
+  "title": "[FREE] NoCap Type Beat Changed Me 2020",
+  "art": "TK5062476/ih27fwn0p.jpg",
+  "free": false
+ },
+ {
+  "id": "5062591",
+  "slug": "free-quando-rondo-type-beat-apart-2020",
+  "title": "[FREE] Quando Rondo Type Beat Apart 2020",
+  "art": "TK5062591/ih27fibc3.jpg",
+  "free": false
+ },
+ {
+  "id": "5062407",
+  "slug": "free-king-von-x-chopsquad-type-beat-danger-2020",
+  "title": "[FREE] King Von x Chopsquad Type Beat Danger 2020",
+  "art": "TK5062407/ih27ftlia.jpg",
+  "free": false
+ },
+ {
+  "id": "4778160",
+  "slug": "2kbaby-x-kingvon-future",
+  "title": "2kBaby x KingVon Future",
+  "art": "TK4778160/ih27fvk19.png",
+  "free": false
+ },
+ {
+  "id": "4526021",
+  "slug": "free-rod-wave-type-beat-on-my-own",
+  "title": "[FREE] Rod Wave Type Beat On My Own",
+  "art": "TK4526021/ih27fdrcf.jpg",
+  "free": false
+ },
+ {
+  "id": "4526181",
+  "slug": "free-rod-wave-type-beat-troubles",
+  "title": "[FREE] Rod Wave Type Beat Troubles",
+  "art": "TK4526181/ih27flwte.jpg",
+  "free": false
+ },
+ {
+  "id": "4525923",
+  "slug": "free-rod-wave-type-beat-plans",
+  "title": "[FREE] Rod Wave Type Beat Plans",
+  "art": "TK4525923/ih27f2wy8.jpg",
+  "free": false
+ },
+ {
+  "id": "4526224",
+  "slug": "free-rod-wave-type-beat-i-remember",
+  "title": "[FREE] Rod Wave Type Beat I Remember",
+  "art": "TK4526224/ih27fjeka.jpg",
+  "free": false
+ },
+ {
+  "id": "4526129",
+  "slug": "free-rod-wave-type-beat-eternal",
+  "title": "[FREE] Rod Wave Type Beat Eternal",
+  "art": "TK4526129/ih27fle5d.jpg",
+  "free": false
+ },
+ {
+  "id": "4526158",
+  "slug": "free-rod-wave-type-beat-distance",
+  "title": "[FREE] Rod Wave Type Beat Distance",
+  "art": "TK4526158/ih27fetpy.jpg",
+  "free": false
+ },
+ {
+  "id": "4526082",
+  "slug": "free-rod-wave-type-beat-heartless",
+  "title": "[FREE] Rod Wave Type Beat Heartless",
+  "art": "TK4526082/ih27fjgvd.jpg",
+  "free": false
+ }
 ]
