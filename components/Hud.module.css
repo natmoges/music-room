@@ -45,7 +45,15 @@
 .house { margin: 0; color: rgba(217, 217, 217, 0.45); }
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 @media (max-width: 760px) {
-  .hud { width: 100%; max-height: none; border-radius: 16px 16px 0 0; padding: 16px 14px 28px; }
+  .hud { width: 100%; max-height: none; border-radius: 16px 16px 0 0; padding: 14px 12px 28px; margin-top: 18px; gap: 12px; background-size: 0 0, 0 0, 0 0, 0 0; }
+  .focus { grid-template-columns: 72px 1fr; padding: 12px; gap: 10px 12px; }
+  .art { width: 72px; height: 72px; }
+  .name { font-size: 20px; }
+  .notes { grid-template-columns: 1fr 1fr; }
+  .notes li:last-child { grid-column: 1 / -1; }
+  .license { grid-template-columns: 1fr; grid-template-areas: "n" "f" "p"; gap: 4px; }
+  .lprice { align-self: start; margin-top: 4px; }
+  .top { font-size: 9px; letter-spacing: 0.12em; }
   .row, .rowOn, .license { padding-top: 12px; padding-bottom: 12px; }
 }
 @media (prefers-reduced-motion: reduce) { .hud { animation: none; } }

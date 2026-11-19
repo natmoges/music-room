@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Room from "@/components/Room";
-import { BEATS, artUrl, findBeat, readTitle } from "@/lib/catalog";
+import { ALL_BEATS, BEATS, artUrl, findBeat, readTitle } from "@/lib/catalog";
 
 // Every beat answers at two addresses: /beat/<id> (the YouTube links) and
-// /beat/<slug>-<id> (the BeatStars links). Both are written out at build time.
+// /beat/<slug>-<id> (the BeatStars links). Both are written for every beat BeatStars has,
+// so an unlisted video's link still opens the room; a beat that isn't up shows lost signal.
 export function generateStaticParams() {
-  return BEATS.flatMap((b) => [{ id: b.id }, { id: `${b.slug}-${b.id}` }]);
+  return ALL_BEATS.flatMap((b) => [{ id: b.id }, { id: `${b.slug}-${b.id}` }]);
 }
 export const dynamicParams = false;
 

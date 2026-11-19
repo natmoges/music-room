@@ -1,9 +1,14 @@
 import catalog from "@/data/catalog.json";
+import published from "@/data/published.json";
 import { ART, STORE } from "./site";
 
 export type Beat = { id: string; slug: string; title: string; art: string; free: boolean };
 
-export const BEATS = catalog as Beat[];
+// Everything BeatStars knows about, and the part of it that's public: only the beats
+// published on YouTube are up in the room.
+export const ALL_BEATS = catalog as Beat[];
+const LIVE = new Set(published.ids);
+export const BEATS = ALL_BEATS.filter((b) => LIVE.has(b.id));
 
 // "[FREE] Lil Uzi Vert Type Beat Universal" → name "Universal", tags "Lil Uzi Vert"
 export function readTitle(title: string) {
