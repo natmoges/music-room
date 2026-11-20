@@ -3,10 +3,12 @@
 .planetSlot { display: grid; place-items: center; align-content: center; transform: scale(0.9); opacity: 0; transition: transform 1200ms cubic-bezier(.2, .8, .2, 1), opacity 900ms ease; }
 .landed .planetSlot, .room:not(.landed) .planetSlot { opacity: 1; transform: none; }
 .hold { position: fixed; inset: 0; z-index: 50; background: #040608; }
-.blink { position: fixed; inset: 0; z-index: 50; background: #040608; animation: blink 250ms steps(2) forwards; }
+.blink { display: block; position: fixed; inset: 0; z-index: 50; background: #040608; animation: blink 250ms steps(2) forwards; }
 @keyframes blink { 50% { background: #0c2a1a; } }
 @media (max-width: 760px) {
   .stage { grid-template-columns: 1fr; align-items: start; gap: 0; padding: 0; }
   .planetSlot { padding: 14px 18px 10px; }
   .planetSlot > :last-child { width: min(50vw, 220px); }
 }
+.cancel { all: unset; position: fixed; inset: 0; z-index: 50; cursor: pointer; }
+.cancelHint { position: fixed; left: 50%; bottom: 8vh; z-index: 60; transform: translateX(-50%); font: 10px/1 var(--mono); letter-spacing: 0.18em; color: rgba(12, 14, 15, 0.7); text-transform: uppercase; }

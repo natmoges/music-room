@@ -30,6 +30,7 @@ import Starfield from "./Starfield";
 import Planet from "./Planet";
 import Masthead from "./Masthead";
 import Hud from "./Hud";
+import { usePreview } from "./usePreview";
 import styles from "./Room.module.css";
 
 type Entry = "home" | "beat";
@@ -52,7 +53,8 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
   const [reduced, setReduced] = useState(false);
   const [selected, setSelected] = useState<Beat | null>(initial);
   const [isLost, setIsLost] = useState(lost);
-  const [launch, setLaunch] = useState<{ to: () => void; ms: number } | null>(null);
+  const [launch, setLaunch] = useState<{ to: () => void; ms: number; leaving: boolean } | null>(null);
+  const player = usePreview(selected);
 
   // Decide how long the jump is, once, on the client.
   useEffect(() => {
@@ -63,36 +65,59 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
     setArrival(entry === "beat" || lost ? 500 : seen ? 800 : 2000);
   }, [entry, lost]);
 
+  // Coming back with the browser's Back button. The browser restores the page exactly as it
+  // was left, which was mid-launch, so the room would sit frozen in hyperspace. Land instead.
+  useEffect(() => {
+    const back = (e: PageTransitionEvent) => {
+      if (!e.persisted) return;
+      setLaunch(null);
+      setPhase("landed");
+    };
+    window.addEventListener("pageshow", back);
+    return () => window.removeEventListener("pageshow", back);
+  }, []);
+
   const landed = useCallback(() => setPhase("landed"), []);
 
-  const select = useCallback((b: Beat) => {
+  const select = useCallback((b: Beat, play = true) => {
     setSelected(b);
     setIsLost(false);
     try { history.replaceState(null, "", `/beat/${b.id}`); } catch { /* ignore */ }
     track("select_item", { item_id: b.id, item_name: b.title });
-  }, []);
+    if (play && b.preview) player.playWhenReady(b.id);
+  }, [player]);
 
   const jump = useCallback(() => {
     if (!beats.length) return;
-    const next = beats[Math.floor(Math.random() * beats.length)];
+    const pool = beats.length > 1 ? beats.filter((b) => b.id !== selected?.id) : beats;
+    const next = pool[Math.floor(Math.random() * pool.length)];
     track("jump", { item_id: next.id });
-    setLaunch({ ms: reduced ? 0 : 700, to: () => { select(next); setLaunch(null); setArrival(500); setPhase("arriving"); } });
+    player.stop();
+    setLaunch({ ms: reduced ? 0 : 700, leaving: false, to: () => { select(next, false); setLaunch(null); setArrival(500); setPhase("arriving"); } });
     setPhase("launching");
-  }, [beats, reduced, select]);
+  }, [beats, reduced, select, selected, player]);
 
   const onLaunch = useCallback((b: Beat, what: string) => {
     track("begin_checkout", { item_id: b.id, item_name: b.title, license: what });
+    player.stop();
     const go = () => { window.location.href = storeUrl(b); };
-    setLaunch({ ms: reduced ? 0 : 900, to: go });
+    setLaunch({ ms: reduced ? 0 : 900, leaving: true, to: go });
     setPhase("launching");
-  }, [reduced]);
+  }, [reduced, player]);
+
+  // A launch can always be called off: tap the light, or press Escape.
+  const cancel = useCallback(() => { setLaunch(null); setPhase("landed"); }, []);
 
   useEffect(() => {
-    if (phase === "launching" && launch && launch.ms === 0) {
-      const t = setTimeout(launch.to, 250);
-      return () => clearTimeout(t);
-    }
-  }, [phase, launch]);
+    if (phase !== "launching") return;
+    const esc = (e: KeyboardEvent) => { if (e.key === "Escape") cancel(); };
+    window.addEventListener("keydown", esc);
+    let t: ReturnType<typeof setTimeout> | undefined;
+    if (launch && launch.ms === 0) t = setTimeout(launch.to, 250);
+    // If the store doesn't open (blocked, offline), don't leave anyone in the light.
+    const guard = launch?.leaving ? setTimeout(cancel, 8000) : undefined;
+    return () => { window.removeEventListener("keydown", esc); if (t) clearTimeout(t); if (guard) clearTimeout(guard); };
+  }, [phase, launch, cancel]);
 
   return (
     <main className={`${styles.room} ${phase === "landed" ? styles.landed : ""}`}>
@@ -100,10 +125,10 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
       <div className={styles.stage}>
         <div className={styles.planetSlot}>
           <Masthead locked={phase === "landed"} />
-          <Planet onJump={jump} art={selected ? artUrl(selected) || "none" : null} />
+          <Planet onJump={jump} art={selected ? artUrl(selected) || "none" : null} spinning={player.playing} />
         </div>
         {phase !== "arriving" && (
-          <Hud beats={beats} selected={selected} lost={isLost} onSelect={select} onLaunch={onLaunch} onJump={jump} />
+          <Hud beats={beats} selected={selected} lost={isLost} player={player} onSelect={select} onLaunch={onLaunch} onJump={jump} />
         )}
       </div>
 
@@ -111,9 +136,14 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
         ? <CrtBoot onDone={landed} label="NATFROMTHISPLANET" />
         : <Hyperspace key={`a${arrival}${selected?.id}`} mode="arrive" duration={arrival} onDone={landed} />)}
       {phase === "arriving" && arrival === null && <div className={styles.hold} aria-hidden="true" />}
-      {phase === "launching" && launch && (launch.ms > 0
-        ? <Hyperspace mode="launch" duration={launch.ms} onDone={launch.to} />
-        : <div className={styles.blink} aria-hidden="true" />)}
+      {phase === "launching" && launch && (
+        <button className={styles.cancel} onClick={cancel} aria-label="Stay in the room">
+          {launch.ms > 0
+            ? <Hyperspace mode="launch" duration={launch.ms} onDone={launch.to} />
+            : <span className={styles.blink} aria-hidden="true" />}
+          {launch.leaving && <span className={styles.cancelHint}>Heading to checkout · tap to stay</span>}
+        </button>
+      )}
     </main>
   );
 }

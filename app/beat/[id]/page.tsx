@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Room from "@/components/Room";
-import { ALL_BEATS, BEATS, artUrl, findBeat, readTitle } from "@/lib/catalog";
+import { ALL_BEATS, BEATS, findBeat } from "@/lib/beats";
+import { artUrl, readTitle } from "@/lib/catalog";
 
 // Every beat answers at two addresses: /beat/<id> (the YouTube links) and
 // /beat/<slug>-<id> (the BeatStars links). Both are written for every beat BeatStars has,

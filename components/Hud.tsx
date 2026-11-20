@@ -3,7 +3,8 @@
 /* The HUD: where everything happens. Read the catalog, search it, pick a beat, open the
    liner notes, and launch toward checkout. Lost signal lives here too. */
 import { useMemo, useState } from "react";
-import { type Beat, artUrl, readTitle } from "@/lib/catalog";
+import { type Beat, artUrl, listenUrl, readTitle } from "@/lib/catalog";
+import type { Preview } from "./usePreview";
 import { LICENSES, money } from "@/lib/licenses";
 import { LINKS, PRO_ROOM, TUNE_IN } from "@/lib/site";
 import styles from "./Hud.module.css";
@@ -18,9 +19,10 @@ type Props = {
   onSelect: (b: Beat) => void;
   onLaunch: (b: Beat, what: string) => void;
   onJump: () => void;
+  player: Preview;
 };
 
-export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump }: Props) {
+export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump, player }: Props) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
   const [shown, setShown] = useState(PAGE);
@@ -62,7 +64,19 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump 
             <p className={styles.kicker}>{selected.free ? "FREE DOWNLOAD" : "NOW TUNED"}</p>
             <h1 className={styles.name}>{sel.name}</h1>
             {sel.after && <p className={styles.after}>{sel.after}</p>}
-            <a className={styles.listen} href={`https://www.youtube.com/@NatFTP/search?query=${encodeURIComponent(sel.name)}`} target="_blank" rel="noreferrer">
+            {player.has ? (
+              <div className={styles.player}>
+                <button className={styles.play} onClick={player.toggle} aria-label={player.playing ? "Pause preview" : "Play preview"}>
+                  {player.playing ? "❚❚" : "▶"}
+                </button>
+                <input className={styles.seek} type="range" min={0} max={1000} value={Math.round(player.progress * 1000)}
+                  onChange={(e) => player.seek(Number(e.target.value) / 1000)} aria-label="Seek preview" />
+                {player.blocked && <span className={styles.hint}>tap play</span>}
+              </div>
+            ) : (
+              <p className={styles.hint}>Preview lands here soon.</p>
+            )}
+            <a className={styles.listen} href={listenUrl(selected)} target="_blank" rel="noreferrer">
               Hear it on the channel ↗
             </a>
           </div>

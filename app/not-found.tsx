@@ -1,5 +1,5 @@
 import Room from "@/components/Room";
-import { BEATS } from "@/lib/catalog";
+import { BEATS } from "@/lib/beats";
 
 // Dead air. The 404 is the room with lost signal, and a jump back in.
 export const metadata = { title: "Lost signal", robots: { index: false } };

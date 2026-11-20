@@ -57,3 +57,9 @@
   .row, .rowOn, .license { padding-top: 12px; padding-bottom: 12px; }
 }
 @media (prefers-reduced-motion: reduce) { .hud { animation: none; } }
+
+.player { display: flex; align-items: center; gap: 10px; margin: 8px 0 4px; }
+.play { all: unset; cursor: pointer; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--cyan); color: var(--cyan); font: 12px/1 var(--mono); }
+.play:hover, .play:focus-visible { background: rgba(45, 212, 191, 0.15); }
+.seek { flex: 1; accent-color: var(--cyan); min-width: 80px; }
+.hint { font: 10px/1.4 var(--mono); letter-spacing: 0.12em; color: rgba(217, 217, 217, 0.55); margin: 6px 0; }
