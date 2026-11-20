@@ -33,3 +33,15 @@
 .caption { position: absolute; bottom: -5%; left: -10%; right: -10%; display: flex; justify-content: space-between; gap: 16px; white-space: nowrap; margin: 0; font: 10px/1 var(--mono); letter-spacing: 0.18em; color: rgba(217, 217, 217, 0.5); }
 @media (max-width: 760px) { .caption { bottom: -9%; left: 0; right: 0; flex-direction: column; align-items: center; gap: 6px; font-size: 8px; letter-spacing: 0.14em; }  }
 @media (prefers-reduced-motion: reduce) { .tuned .grooves, .tuned .label { animation: none; } .orbit animateMotion { display: none; } .moon { display: none; } }
+
+/* Listening: --kick (low end), --mid, --high run 0..1 while a preview plays; --tint is the art's colour. */
+.wrap { --kick: 0; --mid: 0; --high: 0; --glow: var(--tint, rgb(45 212 191)); }
+.spinning .planet { transform: scale(calc(1 + var(--kick) * 0.05)); transition: transform 60ms linear, box-shadow 60ms linear;
+  box-shadow: 0 0 calc(80px + var(--kick) * 90px) color-mix(in srgb, var(--glow) calc(22% + var(--kick) * 40%), transparent), 0 0 2px rgba(94, 234, 212, 0.9); }
+.spinning .rim { box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--glow) calc(55% + var(--kick) * 45%), transparent), inset 0 0 calc(40px + var(--kick) * 30px) color-mix(in srgb, var(--glow) 45%, transparent), inset 18px -14px 60px rgba(0, 0, 0, 0.55); }
+.wave { position: absolute; width: 66%; aspect-ratio: 1; border-radius: 50%; pointer-events: none; border: 1px solid var(--glow);
+  opacity: calc(var(--kick) * var(--kick) * 0.7); transform: scale(calc(1 + var(--kick) * 0.22)); }
+.spinning .orbit ellipse { stroke: color-mix(in srgb, var(--glow) calc(var(--mid) * 70%), rgba(217, 217, 217, 0.32)); stroke-width: calc(1px + var(--mid) * 1.2px); }
+.shimmer { transform: scale(calc(1 + var(--high) * 0.5)); filter: brightness(calc(1 + var(--high) * 0.9)); }
+.spinning .sat { filter: drop-shadow(0 0 calc(6px + var(--high) * 10px) var(--glow)); }
+@media (prefers-reduced-motion: reduce) { .wave { display: none; } .spinning .planet { transform: none; } }

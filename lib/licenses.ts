@@ -9,6 +9,16 @@ export const LICENSES: License[] = [
   { key: "exclusive", name: "Exclusive", price: null, files: "MP3 + WAV + stems", note: "Negotiated on BeatStars." },
 ];
 
+// What each license says, word for word from the store's Licensing Info page (natftp.beatstars.com/licensing-info).
+// The full contract is one link away and BeatStars shows it again before payment.
+export const TERMS: Record<string, string[]> = {
+  basic: ["Untagged MP3", "All streaming services", "Producer keeps ownership of the beat", "Must credit the producer"],
+  premium: ["Untagged MP3 + WAV", "All streaming services", "Producer keeps ownership of the beat", "Must credit the producer"],
+  trackout: ["For music recording", "Distribute up to 10,000 copies", "500,000 online audio streams", "1 music video", "For-profit live performances", "Radio broadcasting (2 stations)"],
+  unlimited: ["Untagged MP3 + WAV + stems", "All streaming services", "Producer keeps ownership of the beat", "Must credit the producer"],
+  exclusive: ["Price is negotiated: make an offer on BeatStars", "Terms are set in the exclusive contract"],
+};
+
 export const money = (n: number) => `$${n.toFixed(2)}`;
 
 // Only the leases BeatStars actually sells for this beat, at the price it sells them.

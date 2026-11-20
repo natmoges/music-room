@@ -8,8 +8,9 @@
   refuses to play: the button says so and nothing pretends to be playing. The phone's lock
   screen gets the title and the artwork.
 */
-import { useCallback, useEffect, useRef, useState } from "react";
+import { type MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
 import { type Beat, artUrl, readTitle } from "@/lib/catalog";
+import { track } from "@/lib/track";
 
 export type Preview = {
   playing: boolean;
@@ -21,11 +22,18 @@ export type Preview = {
   stop: () => void;
   seek: (fraction: number) => void;
   playWhenReady: (id: string) => void;
+  // The ear the planet listens through: frequency data while a preview plays.
+  analyser: MutableRefObject<AnalyserNode | null>;
 };
 
 export function usePreview(beat: Beat | null): Preview {
   const audio = useRef<HTMLAudioElement | null>(null);
   const pending = useRef<string | null>(null);
+  const analyser = useRef<AnalyserNode | null>(null);
+  const ctx = useRef<AudioContext | null>(null);
+  const heard = useRef({ id: "", half: false, done: false });
+  const current = useRef<Beat | null>(null);
+  current.current = beat;
   const [playing, setPlaying] = useState(false);
   const [blocked, setBlocked] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -34,8 +42,19 @@ export function usePreview(beat: Beat | null): Preview {
   useEffect(() => {
     const a = new Audio();
     a.preload = "none";
+    a.crossOrigin = "anonymous"; // previews on another host (R2 later) must send CORS headers
     audio.current = a;
-    const onTime = () => setProgress(a.duration ? a.currentTime / a.duration : 0);
+    const onTime = () => {
+      const f = a.duration ? a.currentTime / a.duration : 0;
+      setProgress(f);
+      const b = current.current, h = heard.current;
+      if (!b || h.id !== b.id) return;
+      if (f >= 0.5 && !h.half) { h.half = true; track("preview_progress", { item_id: b.id, item_name: readTitle(b.title).name, percent: 50 }); }
+    };
+    const onEnd = () => {
+      const b = current.current, h = heard.current;
+      if (b && h.id === b.id && !h.done) { h.done = true; track("preview_progress", { item_id: b.id, item_name: readTitle(b.title).name, percent: 100 }); }
+    };
     const onMeta = () => setDuration(a.duration || 0);
     const onPlay = () => { setPlaying(true); setBlocked(false); };
     const onPause = () => setPlaying(false);
@@ -44,13 +63,32 @@ export function usePreview(beat: Beat | null): Preview {
     a.addEventListener("play", onPlay);
     a.addEventListener("pause", onPause);
     a.addEventListener("ended", onPause);
+    a.addEventListener("ended", onEnd);
     return () => { a.pause(); a.src = ""; };
   }, []);
 
   const start = useCallback(async () => {
     const a = audio.current;
     if (!a) return;
-    try { await a.play(); } catch { setBlocked(true); setPlaying(false); }
+    // The analyser is wired on the first real play (browsers only allow audio after a tap).
+    try {
+      if (!ctx.current) {
+        const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        const c = new AC();
+        const node = c.createAnalyser();
+        node.fftSize = 1024;
+        node.smoothingTimeConstant = 0.6;
+        c.createMediaElementSource(a).connect(node);
+        node.connect(c.destination);
+        ctx.current = c; analyser.current = node;
+      }
+      if (ctx.current.state === "suspended") await ctx.current.resume();
+    } catch { /* no analyser: the audio still plays, the planet just doesn't react */ }
+    try {
+      await a.play();
+      const b = current.current;
+      if (b && heard.current.id !== b.id) { heard.current = { id: b.id, half: false, done: false }; track("preview_start", { item_id: b.id, item_name: readTitle(b.title).name }); }
+    } catch { setBlocked(true); setPlaying(false); }
   }, []);
 
   // Load the tuned beat's preview whenever the beat changes.
@@ -101,5 +139,5 @@ export function usePreview(beat: Beat | null): Preview {
     return () => window.removeEventListener("keydown", key);
   }, [toggle]);
 
-  return { playing, blocked, progress, duration, has: !!beat?.preview, toggle, stop, seek, playWhenReady };
+  return { playing, blocked, progress, duration, has: !!beat?.preview, toggle, stop, seek, playWhenReady, analyser };
 }

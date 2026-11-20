@@ -27,6 +27,15 @@ export function readTitle(title: string) {
 }
 
 export const artUrl = (b: Beat) => (b.art ? ART + b.art : "");
-export const storeUrl = (b: Beat) => `${STORE}/beat/${b.slug}-${b.id}`;
+// The store link carries where the buyer came from, so the purchase on BeatStars can be traced
+// back to the room (and to the license they were looking at).
+export const storeUrl = (b: Beat, license?: string) => {
+  const u = new URL(`${STORE}/beat/${b.slug}-${b.id}`);
+  u.searchParams.set("utm_source", "natftp.com");
+  u.searchParams.set("utm_medium", "music_room");
+  u.searchParams.set("utm_campaign", b.id);
+  if (license) u.searchParams.set("utm_content", license);
+  return u.toString();
+};
 export const listenUrl = (b: Beat) =>
   b.youtube ? `https://www.youtube.com/watch?v=${b.youtube}` : `https://www.youtube.com/@NatFTP/search?query=${encodeURIComponent(readTitle(b.title).name)}`;

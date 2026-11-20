@@ -24,6 +24,7 @@
 */
 import { useCallback, useEffect, useState, useRef } from "react";
 import { type Beat, artUrl, readTitle, storeUrl } from "@/lib/catalog";
+import { track } from "@/lib/track";
 import Hyperspace from "./Hyperspace";
 import CrtBoot from "./CrtBoot";
 import Starfield from "./Starfield";
@@ -37,15 +38,6 @@ type Entry = "home" | "beat";
 type Phase = "arriving" | "landed" | "launching";
 
 const VISITED = "nfp.visited";
-
-// Fire-and-forget events for the tags already on the site (GA4, Meta, TikTok).
-function track(name: string, data: Record<string, string>) {
-  const w = window as unknown as { gtag?: Function; fbq?: Function; ttq?: { track: Function } };
-  try {
-    w.gtag?.("event", name, data);
-    if (name === "begin_checkout") { w.fbq?.("track", "InitiateCheckout", data); w.ttq?.track("InitiateCheckout", data); }
-  } catch { /* analytics never breaks the room */ }
-}
 
 export default function Room({ beats, entry, initial, lost = false }: { beats: Beat[]; entry: Entry; initial: Beat | null; lost?: boolean }) {
   const [phase, setPhase] = useState<Phase>("arriving");
@@ -96,7 +88,7 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
     document.title = `${readTitle(b.title).name} · NatFromThisPlanet`;
     document.querySelector('meta[name="robots"]')?.remove();
     document.querySelector('link[rel="canonical"]')?.setAttribute("href", `${location.origin}/beat/${b.id}`);
-    track("select_item", { item_id: b.id, item_name: b.title });
+    track("view_item", { item_id: b.id, item_name: readTitle(b.title).name });
     if (play && b.preview) { if (b.id === selected?.id) player.toggle(); else player.playWhenReady(b.id); }
   }, [player, selected]);
 
@@ -110,11 +102,11 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
     setPhase("launching");
   }, [beats, reduced, select, selected, player]);
 
-  const onLaunch = useCallback((b: Beat, what: string) => {
+  const onLaunch = useCallback((b: Beat, what: string, value?: number) => {
     player.stop();
     // Counted only when the room actually lets go, so a called-off launch isn't a checkout.
     const token = ++launchId.current;
-    const go = () => { if (token !== launchId.current) return; track("begin_checkout", { item_id: b.id, item_name: b.title, license: what }); window.location.href = storeUrl(b); };
+    const go = () => { if (token !== launchId.current) return; track("begin_checkout", { item_id: b.id, item_name: readTitle(b.title).name, license: what, value }); window.location.href = storeUrl(b, what); };
     setLaunch({ ms: reduced ? 0 : 900, leaving: true, to: go });
     setPhase("launching");
   }, [reduced, player]);
@@ -139,7 +131,7 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
       <div className={styles.stage}>
         <div className={styles.planetSlot}>
           <Masthead locked={phase === "landed"} />
-          <Planet onJump={jump} art={selected ? artUrl(selected) || "none" : null} spinning={player.playing} />
+          <Planet onJump={jump} art={selected ? artUrl(selected) || "none" : null} spinning={player.playing} analyser={player.analyser} />
         </div>
         {phase !== "arriving" && (
           <Hud beats={beats} selected={selected} lost={isLost} player={player} onSelect={select} onLaunch={onLaunch} onJump={jump} />
