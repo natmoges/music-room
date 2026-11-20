@@ -61,3 +61,15 @@
 .satBtn:focus-visible .sat { stroke: var(--cyan); stroke-width: 2; }
 .satTip { font: 9px var(--mono); letter-spacing: 0.16em; fill: var(--cyan); pointer-events: none; }
 .orbit ellipse, .moon { pointer-events: none; }
+
+.satCraft { transition: transform 200ms ease; filter: drop-shadow(0 0 4px rgba(34, 211, 238, 0.7)); }
+.panel { fill: #0b3a4a; stroke: #5eead4; stroke-width: 0.8; }
+.panelGrid { stroke: rgba(94, 234, 212, 0.55); stroke-width: 0.5; fill: none; }
+.strut { stroke: #d9d9d9; stroke-width: 0.9; fill: none; }
+.body { fill: #e5e7eb; stroke: #9ca3af; stroke-width: 0.5; }
+.beacon { fill: #ef4444; animation: beacon 1.6s steps(1) infinite; }
+@keyframes beacon { 50% { fill: #3f0d0d; } }
+.satTag { font: 7px var(--mono); letter-spacing: 0.18em; fill: rgba(217, 217, 217, 0.55); pointer-events: none; }
+.satBtn:hover .satTag, .satBtn:focus-visible .satTag { fill: var(--cyan); }
+.satBtn:focus-visible .body { stroke: var(--cyan); stroke-width: 1.5; }
+@media (prefers-reduced-motion: reduce) { .beacon { animation: none; } }

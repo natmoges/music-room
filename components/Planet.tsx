@@ -188,9 +188,19 @@ export default function Planet({ onJump, art, spinning = false, analyser, rate =
           onPointerLeave={() => { orbit.current?.unpauseAnimations(); setSatHover(false); }}
           onFocus={() => { orbit.current?.pauseAnimations(); setSatHover(true); }}
           onBlur={() => { orbit.current?.unpauseAnimations(); setSatHover(false); }}>
-          <circle r="16" fill="transparent" />
-          <circle className={styles.sat} r={satHover ? 6 : 4} />
-          {satHover && <text className={styles.satTip} y="-14" textAnchor="middle">SAT_1 · RANDOM BEAT</text>}
+          <circle r="22" fill="transparent" />
+          <g className={styles.satCraft} transform={`scale(${satHover ? 1.35 : 1})`}>
+            {/* solar panels */}
+            <rect x="-17" y="-3.5" width="10" height="7" rx="0.8" className={styles.panel} />
+            <rect x="7" y="-3.5" width="10" height="7" rx="0.8" className={styles.panel} />
+            <path d="M-13.7,-3.5V3.5M-10.3,-3.5V3.5M10.3,-3.5V3.5M13.7,-3.5V3.5" className={styles.panelGrid} />
+            <path d="M-7,0H-4M4,0H7" className={styles.strut} />
+            {/* body, dish, beacon */}
+            <rect x="-4" y="-4.5" width="8" height="9" rx="1.5" className={styles.body} />
+            <path d="M0,-4.5V-8M-2.6,-9.4Q0,-7 2.6,-9.4" className={styles.strut} />
+            <circle cy="2" r="1.1" className={styles.beacon} />
+          </g>
+          <text className={styles.satTag} y="17" textAnchor="middle">{satHover ? "SAT_1 · RANDOM BEAT" : "SAT_1"}</text>
           <animateMotion dur="16s" repeatCount="indefinite" path={PATH} />
         </g>
         <defs>
