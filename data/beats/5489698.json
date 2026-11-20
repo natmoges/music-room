@@ -1,6 +1,6 @@
 {
   "id": "5489698",
-  "published": true,
+  "published": false,
   "bpm": 145,
   "key": "Dm",
   "mood": [],
@@ -8,5 +8,5 @@
   "youtube": null,
   "preview": null,
   "visualizer": null,
-  "note": ""
+  "note": "Held back Nov 20: Savage is a DRAFT on BeatStars, so checkout would fail. Set published: true after Nat publishes it there and the store page loads."
 }

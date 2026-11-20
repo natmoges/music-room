@@ -39,6 +39,16 @@ type Phase = "arriving" | "landed" | "launching";
 
 const VISITED = "nfp.visited";
 
+// Leave through a real link click, so the GA linker decorates it and the session carries over.
+function openLink(href: string) {
+  const a = document.createElement("a");
+  a.href = href;
+  a.rel = "noopener";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
 export default function Room({ beats, entry, initial, lost = false }: { beats: Beat[]; entry: Entry; initial: Beat | null; lost?: boolean }) {
   const [phase, setPhase] = useState<Phase>("arriving");
   const launchId = useRef(0);
@@ -100,7 +110,10 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
 
   const jump = useCallback(() => {
     if (!beats.length) return;
-    const pool = beats.length > 1 ? beats.filter((b) => b.id !== selected?.id) : beats;
+    // SAT_1 only lands on beats you can hear right away.
+    const playable = beats.filter((b) => b.preview);
+    const base = playable.length ? playable : beats;
+    const pool = base.length > 1 ? base.filter((b) => b.id !== selected?.id) : base;
     const next = pool[Math.floor(Math.random() * pool.length)];
     track("jump", { item_id: next.id });
     player.stop();
@@ -114,7 +127,7 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
     const token = ++launchId.current;
     const t = player.tune;
     const tuneTag = t.tempo || t.semis ? `${t.mode}_t${t.tempo}_k${t.semis}` : undefined;
-    const go = () => { if (token !== launchId.current) return; track("begin_checkout", { item_id: b.id, item_name: readTitle(b.title).name, license: what, value, tune: tuneTag }); window.location.href = storeUrl(b, what, tuneTag); };
+    const go = () => { if (token !== launchId.current) return; track("begin_checkout", { item_id: b.id, item_name: readTitle(b.title).name, license: what, value, tune: tuneTag }); openLink(storeUrl(b, what, tuneTag)); };
     setLaunch({ ms: reduced ? 0 : 900, leaving: true, to: go });
     setPhase("launching");
   }, [reduced, player]);

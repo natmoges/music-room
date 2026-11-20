@@ -105,3 +105,6 @@
 .tuneFoot { display: flex; gap: 10px; align-items: center; justify-content: space-between; }
 .tuneFoot .clear:disabled { opacity: 0.4; cursor: default; }
 .freeRow { grid-column: 1 / -1; text-align: center; padding-top: 2px; }
+
+.invite { font: 11px/1.4 var(--mono); letter-spacing: 0.06em; color: var(--cyan); text-decoration: none; margin-top: -6px; }
+.invite:hover, .invite:focus-visible { text-decoration: underline; }

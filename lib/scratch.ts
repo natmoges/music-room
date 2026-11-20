@@ -67,22 +67,25 @@ export async function makeScratch(ctx: AudioContext, out: AudioNode): Promise<Sc
     URL.revokeObjectURL(url);
   }
   node.connect(out);
+  // Only the beat asked for last can become "ready": a slow load for a beat already left
+  // behind is dropped, so the record never scratches the wrong song.
   let loaded = "";
-  let loading: Promise<void> | null = null;
+  let wanted = "";
   let posCb: ((s: number, r: number) => void) | null = null;
   node.port.onmessage = (e) => { if (e.data?.type === "pos") posCb?.(e.data.seconds, e.data.rate); };
   return {
-    ready: () => loaded !== "",
-    load: (src) => {
-      if (loaded === src) return Promise.resolve();
-      loading = (async () => {
+    ready: () => loaded !== "" && loaded === wanted,
+    load: async (src) => {
+      wanted = src;
+      if (!src || loaded === src) return;
+      try {
         const res = await fetch(src);
         const buf = await ctx.decodeAudioData(await res.arrayBuffer());
+        if (wanted !== src) return;
         const channels = Array.from({ length: Math.min(2, buf.numberOfChannels) }, (_, i) => buf.getChannelData(i).slice());
         node.port.postMessage({ type: "load", channels, sampleRate: buf.sampleRate }, channels.map((c) => c.buffer));
         loaded = src;
-      })().catch(() => { loaded = ""; });
-      return loading;
+      } catch { if (wanted === src) loaded = ""; }
     },
     start: (seconds, rate) => node.port.postMessage({ type: "start", seconds, rate }),
     setRate: (rate, ease) => node.port.postMessage({ type: "rate", rate, ease }),

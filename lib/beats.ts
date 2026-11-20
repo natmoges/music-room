@@ -8,7 +8,7 @@ import catalog from "@/data/catalog.json";
 import type { Beat } from "./catalog";
 
 type FeedRow = { id: string; slug: string; title: string; art: string; free: boolean };
-type BeatFile = Partial<Omit<Beat, "id">> & { id: string; published?: boolean };
+type BeatFile = Partial<Omit<Beat, "id" | "preview">> & { id: string; published?: boolean; preview?: string | null | false; freeDownload?: boolean };
 
 const ROOT = process.cwd();
 const BEAT_DIR = path.join(ROOT, "data", "beats");
@@ -30,7 +30,9 @@ function readBeatFiles(): Map<string, BeatFile> {
   return files;
 }
 
-function resolvePreview(id: string, given?: string | null): string | null {
+// preview: false means "this file is not this beat": nothing plays, even if a file is sitting there.
+function resolvePreview(id: string, given?: string | null | false): string | null {
+  if (given === false) return null;
   if (given) return given;
   return fs.existsSync(path.join(PREVIEW_DIR, `${id}.mp3`)) ? `/previews/${id}.mp3` : null;
 }
@@ -45,6 +47,7 @@ function build(row: FeedRow, file?: BeatFile): Beat {
     youtube: file?.youtube ?? null,
     preview: resolvePreview(row.id, file?.preview),
     visualizer: file?.visualizer ?? null,
+    freeDownload: file?.freeDownload === true,
   };
 }
 

@@ -3,6 +3,7 @@
 /* The HUD: where everything happens. Read the catalog, search it, pick a beat, open the
    liner notes, and launch toward checkout. Lost signal lives here too. */
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { type Beat, artUrl, listenUrl, readTitle, storeUrl } from "@/lib/catalog";
 import type { Preview } from "./usePreview";
 import { type License, TERMS, licensesFor, money } from "@/lib/licenses";
@@ -24,6 +25,15 @@ type Props = {
   tuneOpen: boolean;
   setTuneOpen: (open: boolean) => void;
 };
+
+// "A minor", "a min", "C♯m", "Db major" all find the same beats as "Am", "C#m", "Dbmaj".
+function normalizeQuery(q: string) {
+  return q.toLowerCase()
+    .replace(/♯/g, "#").replace(/♭/g, "b")
+    .replace(/\b([a-g])\s*(#|b)?\s*(minor|min)\b/g, "$1$2m")
+    .replace(/\b([a-g])\s*(#|b)?\s*(major|maj)\b/g, "$1$2maj")
+    .replace(/\bbpm\b/g, "");
+}
 
 export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump, player, tuneOpen, setTuneOpen }: Props) {
   const [query, setQuery] = useState("");
@@ -86,7 +96,7 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
 
   const results = useMemo(() => {
     // Every word has to land somewhere: title, artist, mood, tags, BPM or key.
-    const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+    const words = normalizeQuery(query).split(/\s+/).filter(Boolean);
     return beats.filter((b) => {
       if (filter === "free" && !b.free) return false;
       if (filter === "lease" && b.free) return false;
@@ -118,6 +128,9 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
         <span>NATFROMTHISPLANET</span>
         <span className={styles.count}>{beats.length} TRANSMISSIONS</span>
       </header>
+      <a href={TUNE_IN} target="_blank" rel="noreferrer" className={styles.invite} onClick={() => track("list_invite_click", { place: "header" })}>
+        First listen to new beats, by email ↗
+      </a>
 
       {lost && (
         <div className={styles.lost} role="status">
@@ -200,7 +213,7 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
                   </button>
                 </li>
               ))}
-              {/^\[FREE\]/i.test(selected.title) && (
+              {selected.freeDownload && (
                 <li className={styles.freeRow}>
                   <a className={styles.listen} href={storeUrl(selected, "free download")} onClick={() => track("free_download", { item_id: selected.id, item_name: sel.name })}>
                     Free tagged download (personal use) on BeatStars ↗
@@ -275,7 +288,7 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
         </button>
       )}
 
-      {selected && sel && cardGone && (
+      {selected && sel && cardGone && typeof document !== "undefined" && createPortal(
         <div className={styles.mini} role="region" aria-label="Now playing">
           {selected.art && (
             // eslint-disable-next-line @next/next/no-img-element
@@ -290,11 +303,12 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
             </button>
           )}
           <span className={styles.miniBar} style={{ transform: `scaleX(${player.progress})` }} aria-hidden="true" />
-        </div>
+        </div>,
+        document.body,
       )}
 
       <footer className={styles.bottom}>
-        <a href={TUNE_IN} target="_blank" rel="noreferrer" className={styles.tune}>Tune in: new drops, by email ↗</a>
+        <a href={TUNE_IN} target="_blank" rel="noreferrer" className={styles.tune}>First listen to new beats, by email ↗</a>
         <nav className={styles.links} aria-label="Elsewhere">
           {LINKS.map((l) => <a key={l.label} href={l.href} target="_blank" rel="noreferrer">{l.label}</a>)}
         </nav>

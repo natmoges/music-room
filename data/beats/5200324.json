@@ -1,12 +1,13 @@
 {
   "id": "5200324",
   "published": true,
-  "bpm": 160,
+  "bpm": 115,
   "key": "Cm",
   "mood": [],
   "tags": [],
   "youtube": null,
-  "preview": null,
+  "preview": false,
   "visualizer": null,
-  "note": ""
+  "note": "Preview quarantined Nov 20: the T9 'Projects_Cm_160bpm' file is the Meek Mill Projects (5755673), not this D4M beat (115 BPM, 3:37).",
+  "freeDownload": true
 }

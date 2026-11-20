@@ -3,6 +3,7 @@
 // downloaded in the browser and saved as data/feed.csv; this reads that file. If it isn't
 // there, it tries the feed directly; if that fails too, the last good copy stays.
 import { readFile, writeFile, access } from "node:fs/promises";
+import { readFileSync } from "node:fs";
 
 const FEED =
   "https://main.v2.beatstars.com/fb/catalog/be0aba966998a648372b680a9f46a62b73d5a4054872adf93b9b6e33c0e696f1";
@@ -27,7 +28,7 @@ function toCatalog(rows) {
     const link = r[14] ?? "";
     const fullSlug = link.split("/beat/")[1] ?? id;
     const price = Number.parseFloat(r[19]);
-    if (!Number.isFinite(price) || price < 0) throw new Error(`bad price "${r[19]}" on ${r[0]}; feed rejected, last good catalog kept`);
+    if (!Number.isFinite(price) || price < 0) { process.exitCode = 1; throw new Error(`bad price "${r[19]}" on ${r[0]}; feed rejected, last good catalog kept`); }
     const beat = beats.get(id) ?? {
       id,
       slug: fullSlug.replace(new RegExp(`-${id}$`), ""),
@@ -60,6 +61,24 @@ try {
   const { text, from } = await readFeed();
   const catalog = toCatalog(parseCsv(text));
   if (catalog.length === 0) throw new Error("feed was empty");
+  // A feed that suddenly lost a lot of beats is more likely broken than true. Refuse it.
+  let before = 0;
+  try { before = JSON.parse(await readFile(OUT, "utf8")).length; } catch { /* first run */ }
+  // Any beat that is up in the room must still be in the feed; otherwise its buy links break.
+  const { readdirSync } = await import("node:fs");
+  const live = readdirSync(new URL("../data/beats/", import.meta.url)).filter((f) => f.endsWith(".json"))
+    .map((f) => JSON.parse(readFileSync(new URL(`../data/beats/${f}`, import.meta.url), "utf8")))
+    .filter((b) => b.published !== false).map((b) => String(b.id));
+  const ids = new Set(catalog.map((b) => b.id));
+  const gone = live.filter((id) => !ids.has(id));
+  if (gone.length && !process.argv.includes("--allow-removals")) {
+    process.exitCode = 1;
+    throw new Error(`the feed is missing beats that are up in the room: ${gone.join(", ")}. Check BeatStars, or set them to published: false.`);
+  }
+  if (before && catalog.length < before * 0.9 && !process.argv.includes("--allow-removals")) {
+    process.exitCode = 1;
+    throw new Error(`feed has ${catalog.length} beats, the catalog had ${before}. If that's on purpose, run: npm run sync -- --allow-removals`);
+  }
   await writeFile(OUT, JSON.stringify(catalog, null, 1) + "\n");
   console.log(`catalog: ${catalog.length} beats from ${from}`);
 } catch (err) {

@@ -49,7 +49,7 @@ export function usePreview(beat: Beat | null): Preview {
   const pending = useRef<string | null>(null);
   const analyser = useRef<AnalyserNode | null>(null);
   const ctx = useRef<AudioContext | null>(null);
-  const heard = useRef({ id: "", half: false, done: false });
+  const heard = useRef({ id: "", half: false, done: false, secs: 0 });
   const current = useRef<Beat | null>(null);
   current.current = beat;
   const [playing, setPlaying] = useState(false);
@@ -84,12 +84,18 @@ export function usePreview(beat: Beat | null): Preview {
     a.preload = "none";
     a.crossOrigin = "anonymous"; // previews on another host (R2 later) must send CORS headers
     audio.current = a;
+    let lastT = 0, lastWall = 0;
     const onTime = () => {
       const f = a.duration ? a.currentTime / a.duration : 0;
       setProgress(f);
+      // Count time actually heard, not where the playhead was dragged to.
+      const now = performance.now();
+      const dt = a.currentTime - lastT, wall = (now - lastWall) / 1000;
+      if (!a.paused && dt > 0 && dt < Math.max(1.5, wall * 2 + 0.5)) heard.current.secs += dt;
+      lastT = a.currentTime; lastWall = now;
       const b = current.current, h = heard.current;
       if (!b || h.id !== b.id) return;
-      if (f >= 0.5 && !h.half) { h.half = true; track("preview_progress", { item_id: b.id, item_name: readTitle(b.title).name, percent: 50 }); }
+      if (a.duration && h.secs >= a.duration * 0.5 && !h.half) { h.half = true; track("preview_progress", { item_id: b.id, item_name: readTitle(b.title).name, percent: 50 }); }
     };
     const onEnd = () => {
       const b = current.current, h = heard.current;
@@ -140,7 +146,7 @@ export function usePreview(beat: Beat | null): Preview {
     try {
       await a.play();
       const b = current.current;
-      if (b && heard.current.id !== b.id) { heard.current = { id: b.id, half: false, done: false }; track("preview_start", { item_id: b.id, item_name: readTitle(b.title).name }); }
+      if (b && heard.current.id !== b.id) { heard.current = { id: b.id, half: false, done: false, secs: 0 }; track("preview_start", { item_id: b.id, item_name: readTitle(b.title).name }); }
     } catch { setBlocked(true); setPlaying(false); }
   }, [apply]);
 
@@ -153,7 +159,7 @@ export function usePreview(beat: Beat | null): Preview {
     setDuration(0);
     setBlocked(false);
     tuneRef.current = { ...UNTUNED, mode: tuneRef.current.mode }; setTuneState(tuneRef.current);
-    if (!beat?.preview) { a.removeAttribute("src"); a.load(); return; }
+    if (!beat?.preview) { a.removeAttribute("src"); a.load(); void engine.current?.load(""); return; }
     a.src = beat.preview;
     apply(tuneRef.current);
     if (engine.current) void engine.current.load(beat.preview);

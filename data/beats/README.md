@@ -11,18 +11,23 @@ YouTube video, the preview audio, the visualizer.
   "id": "5200324",
   "published": true,
   "bpm": 146,
-  "key": "A minor",
+  "key": "Am",
   "mood": ["dark", "philly"],
   "tags": ["drill"],
   "youtube": "VIDEO_ID",
-  "preview": "/previews/5200324.mp3",
+  "preview": null,
+  "freeDownload": false,
   "visualizer": "https://…/5200324.mp4",
   "note": ""
 }
 ```
 
-- `preview`: a URL or a path under `public/`. Use the **tagged** MP3. If it's `null`, the room
-  looks for `/previews/<id>.mp3`; if that isn't there either, the HUD shows "preview soon".
+- `preview`: leave it `null` and put the **tagged** MP3 at `public/previews/<id>.mp3` (named by the
+  BeatStars ID, never by title: two beats can share a title). It can also be
+  `"/previews/<id>.mp3"` or an `https://` URL. `false` means "the file here is not this beat":
+  nothing plays.
+- `key`: written like `Am`, `C#m`, `Ebmaj`, `G`. `bpm`: a whole number, as on BeatStars.
+- `freeDownload: true` only after checking the beat's BeatStars page shows the Download button.
 - `published: false` takes a beat down without deleting its file.
 - Anything else can be added; the site ignores keys it doesn't know, so tools can attach data.
 

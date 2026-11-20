@@ -8,6 +8,7 @@ export type Beat = {
   art: string;
   free: boolean;
   licenses?: Record<string, number>; // license key -> price, from the feed
+  freeDownload?: boolean; // BeatStars offers a free tagged download for this beat (checked by hand)
   bpm: number | null;
   key: string | null;
   mood: string[];

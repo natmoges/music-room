@@ -15,7 +15,8 @@ export const dynamicParams = false;
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const beat = findBeat((await params).id);
-  if (!beat) return { title: "Lost signal" };
+  // An address that isn't a beat in the room: say so to search engines too.
+  if (!beat) return { title: "Lost signal", robots: { index: false, follow: true } };
   const { name, after } = readTitle(beat.title);
   return {
     title: name,

@@ -18,11 +18,25 @@ for (const name of readdirSync(dir).filter((f) => f.endsWith(".json"))) {
   try { b = JSON.parse(readFileSync(new URL(name, dir), "utf8")); } catch (e) { errors.push(`${where}: not valid JSON (${e.message})`); continue; }
   const id = name.replace(/\.json$/, "");
   if (b.id !== id) errors.push(`${where}: id "${b.id}" doesn't match the file name`);
-  for (const k of ["mood", "tags"]) if (b[k] != null && !Array.isArray(b[k])) errors.push(`${where}: ${k} must be a list, like ["dark"]`);
-  if (b.bpm != null && typeof b.bpm !== "number") errors.push(`${where}: bpm must be a number`);
-  if (b.key != null && typeof b.key !== "string") errors.push(`${where}: key must be text, like "C#m"`);
+  for (const k of ["mood", "tags"]) {
+    if (b[k] == null) continue;
+    if (!Array.isArray(b[k]) || b[k].some((x) => typeof x !== "string" || !x.trim())) errors.push(`${where}: ${k} must be a list of words, like ["dark", "philly"]`);
+  }
+  if ("published" in b && typeof b.published !== "boolean") errors.push(`${where}: published must be true or false (no quotes)`);
+  if ("freeDownload" in b && typeof b.freeDownload !== "boolean") errors.push(`${where}: freeDownload must be true or false`);
+  if (b.bpm != null && !(Number.isInteger(b.bpm) && b.bpm >= 40 && b.bpm <= 250)) errors.push(`${where}: bpm must be a whole number between 40 and 250`);
+  if (b.key != null && !/^[A-G](#|b)?(m|maj)?$/.test(b.key)) errors.push(`${where}: key must look like "Am", "C#m", "Ebmaj" or "G"`);
   if (b.youtube != null && !/^[\w-]{11}$/.test(b.youtube)) errors.push(`${where}: youtube must be the 11-character video ID`);
-  if (typeof b.preview === "string" && !/^https:\/\//.test(b.preview)) errors.push(`${where}: preview must be an https URL (or leave it null and put the file in public/previews/${id}.mp3)`);
+  const localPath = `/previews/${id}.mp3`;
+  if (b.preview != null && b.preview !== false && b.preview !== localPath && !/^https:\/\//.test(String(b.preview)))
+    errors.push(`${where}: preview must be null, false, "${localPath}" or an https URL`);
+  // A preview file has to be real audio, not an empty or broken file.
+  const file = new URL(`../public/previews/${id}.mp3`, import.meta.url);
+  if (b.preview !== false && existsSync(file)) {
+    const bytes = readFileSync(file);
+    const isMp3 = bytes.length > 50000 && (bytes.subarray(0, 3).toString() === "ID3" || (bytes[0] === 0xff && (bytes[1] & 0xe0) === 0xe0));
+    if (!isMp3) errors.push(`${where}: public/previews/${id}.mp3 isn't a playable MP3 (empty, tiny or not audio)`);
+  }
   if (b.published === false) continue;
   published++;
 
@@ -32,7 +46,7 @@ for (const name of readdirSync(dir).filter((f) => f.endsWith(".json"))) {
   if (FROZEN.has(id)) continue;
 
   const hasFile = existsSync(new URL(`../public/previews/${id}.mp3`, import.meta.url));
-  if (!hasFile && !b.preview) errors.push(`${where}: new beat with no preview (public/previews/${id}.mp3 or a preview URL)`);
+  if (b.preview === false || (!hasFile && !b.preview)) errors.push(`${where}: new beat with no preview (public/previews/${id}.mp3 or a preview URL)`);
   if (!b.youtube) errors.push(`${where}: new beat with no YouTube ID`);
   if (typeof b.bpm !== "number") errors.push(`${where}: new beat with no BPM`);
   if (!b.key) errors.push(`${where}: new beat with no key`);
