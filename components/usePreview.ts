@@ -11,6 +11,13 @@
 import { type MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
 import { type Beat, artUrl, readTitle } from "@/lib/catalog";
 import { track } from "@/lib/track";
+import { makeShifter } from "@/lib/shifter";
+
+// Trying the beat on: tempo (±15%), in "key" mode (pitch held) or "vinyl" mode (pitch rides
+// with speed, like a turntable), plus a key shift of ±3 semitones in key mode. Nothing here
+// touches the file anyone buys; it only changes how the tagged preview plays in this room.
+export type Tune = { tempo: number; mode: "key" | "vinyl"; semis: number };
+export const UNTUNED: Tune = { tempo: 0, mode: "key", semis: 0 };
 
 export type Preview = {
   playing: boolean;
@@ -24,6 +31,14 @@ export type Preview = {
   playWhenReady: (id: string) => void;
   // The ear the planet listens through: frequency data while a preview plays.
   analyser: MutableRefObject<AnalyserNode | null>;
+  tune: Tune;
+  setTune: (t: Tune) => void;
+  canShift: boolean;
+  rate: number; // the playback speed the tune works out to
+  // Scratching: hold the record, drag it, let go.
+  grab: () => void;
+  scrub: (seconds: number) => void;
+  release: () => void;
 };
 
 export function usePreview(beat: Beat | null): Preview {
@@ -38,6 +53,27 @@ export function usePreview(beat: Beat | null): Preview {
   const [blocked, setBlocked] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [tune, setTuneState] = useState<Tune>(UNTUNED);
+  const tuneRef = useRef<Tune>(UNTUNED);
+  const shifter = useRef<AudioWorkletNode | null>(null);
+  const [canShift, setCanShift] = useState(false);
+  const scratch = useRef({ on: false, was: false, grain: 0 as ReturnType<typeof setTimeout> | 0 });
+  const rate = 1 + tune.tempo / 100;
+
+  // Apply a tune to the element and the shifter.
+  const apply = useCallback((t: Tune) => {
+    const a = audio.current;
+    if (!a) return;
+    const r = 1 + t.tempo / 100;
+    a.preservesPitch = t.mode === "key";
+    a.playbackRate = r;
+    const ratio = t.mode === "key" ? Math.pow(2, t.semis / 12) : 1;
+    shifter.current?.parameters.get("ratio")?.setValueAtTime(ratio, shifter.current.context.currentTime);
+  }, []);
+  const setTune = useCallback((t: Tune) => {
+    const clean: Tune = { tempo: Math.max(-15, Math.min(15, Math.round(t.tempo))), mode: t.mode, semis: Math.max(-3, Math.min(3, Math.round(t.semis))) };
+    tuneRef.current = clean; setTuneState(clean); apply(clean);
+  }, [apply]);
 
   useEffect(() => {
     const a = new Audio();
@@ -78,9 +114,16 @@ export function usePreview(beat: Beat | null): Preview {
         const node = c.createAnalyser();
         node.fftSize = 1024;
         node.smoothingTimeConstant = 0.6;
-        c.createMediaElementSource(a).connect(node);
+        const src = c.createMediaElementSource(a);
+        src.connect(node);
         node.connect(c.destination);
         ctx.current = c; analyser.current = node;
+        // The key shifter loads after the sound has started (Safari only lets audio start straight from a tap).
+        void makeShifter(c).then((shift) => {
+          if (!shift) return;
+          src.disconnect(); src.connect(shift); shift.connect(node);
+          shifter.current = shift; setCanShift(true); apply(tuneRef.current);
+        });
       }
       if (ctx.current.state === "suspended") await ctx.current.resume();
     } catch { /* no analyser: the audio still plays, the planet just doesn't react */ }
@@ -89,7 +132,7 @@ export function usePreview(beat: Beat | null): Preview {
       const b = current.current;
       if (b && heard.current.id !== b.id) { heard.current = { id: b.id, half: false, done: false }; track("preview_start", { item_id: b.id, item_name: readTitle(b.title).name }); }
     } catch { setBlocked(true); setPlaying(false); }
-  }, []);
+  }, [apply]);
 
   // Load the tuned beat's preview whenever the beat changes.
   useEffect(() => {
@@ -99,8 +142,10 @@ export function usePreview(beat: Beat | null): Preview {
     setProgress(0);
     setDuration(0);
     setBlocked(false);
+    tuneRef.current = { ...UNTUNED, mode: tuneRef.current.mode }; setTuneState(tuneRef.current);
     if (!beat?.preview) { a.removeAttribute("src"); a.load(); return; }
     a.src = beat.preview;
+    apply(tuneRef.current);
     if ("mediaSession" in navigator) {
       const { name, after } = readTitle(beat.title);
       navigator.mediaSession.metadata = new MediaMetadata({
@@ -109,7 +154,7 @@ export function usePreview(beat: Beat | null): Preview {
       });
     }
     if (pending.current === beat.id) { pending.current = null; void start(); }
-  }, [beat, start]);
+  }, [beat, start, apply]);
 
   const toggle = useCallback(() => {
     const a = audio.current;
@@ -123,6 +168,34 @@ export function usePreview(beat: Beat | null): Preview {
     const a = audio.current;
     if (a && a.duration) a.currentTime = Math.max(0, Math.min(1, f)) * a.duration;
   }, []);
+
+  // Scratch: pause under the hand; each drag moves the needle and plays a short grain, so a
+  // push forward sounds like the record running and a pull back stutters backwards. Let go and
+  // it carries on exactly where the hand left it, at the tune it was set to.
+  const grab = useCallback(() => {
+    const a = audio.current;
+    if (!a || !a.src || scratch.current.on) return;
+    scratch.current.on = true; scratch.current.was = !a.paused;
+    a.pause();
+  }, []);
+  const scrub = useCallback((s: number) => {
+    const a = audio.current;
+    if (!a || !scratch.current.on || !a.duration) return;
+    a.currentTime = Math.max(0, Math.min(a.duration - 0.05, a.currentTime + (s < 0 ? s * 1.6 : 0)));
+    a.preservesPitch = false;
+    a.playbackRate = Math.max(0.5, Math.min(3, Math.abs(s) * 18));
+    if (a.paused) void a.play().catch(() => {});
+    if (scratch.current.grain) clearTimeout(scratch.current.grain);
+    scratch.current.grain = setTimeout(() => a.pause(), 70);
+  }, []);
+  const release = useCallback(() => {
+    const a = audio.current;
+    if (!a || !scratch.current.on) return;
+    if (scratch.current.grain) clearTimeout(scratch.current.grain);
+    scratch.current.on = false;
+    apply(tuneRef.current);
+    if (scratch.current.was) void start(); else a.pause();
+  }, [apply, start]);
 
   // A beat picked from the list starts on its own (the tap is the permission to play).
   const playWhenReady = useCallback((id: string) => { pending.current = id; }, []);
@@ -139,5 +212,5 @@ export function usePreview(beat: Beat | null): Preview {
     return () => window.removeEventListener("keydown", key);
   }, [toggle]);
 
-  return { playing, blocked, progress, duration, has: !!beat?.preview, toggle, stop, seek, playWhenReady, analyser };
+  return { playing: playing || scratch.current.on, blocked, progress, duration, has: !!beat?.preview, toggle, stop, seek, playWhenReady, analyser, tune, setTune, canShift, rate, grab, scrub, release };
 }

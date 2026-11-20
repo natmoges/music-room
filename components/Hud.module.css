@@ -92,3 +92,16 @@
   .miniBar { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--cyan); transform-origin: left; }
   .hud { padding-bottom: 96px; }
 }
+
+/* Trying it on: tempo and key. */
+.tuneToggle { all: unset; cursor: pointer; display: block; margin: 6px 0 2px; font: 11px/1.4 var(--mono); letter-spacing: 0.06em; color: var(--cyan); }
+.tuneToggle:focus-visible { outline: 1px solid var(--cyan); outline-offset: 3px; }
+.tune { grid-column: 1 / -1; display: grid; gap: 10px; padding: 12px; border-radius: 10px; border: 1px solid rgba(34, 211, 238, 0.25); background: #0e1213; }
+.tuneRow { display: grid; gap: 6px; font-size: 13px; }
+.tuneRow b { color: var(--cyan); font-weight: 600; }
+.tuneRow i { font-style: normal; color: rgba(217, 217, 217, 0.6); }
+.tuneRow input { accent-color: var(--cyan); width: 100%; }
+.tuneModes { display: flex; gap: 8px; }
+.tuneFoot { display: flex; gap: 10px; align-items: center; justify-content: space-between; }
+.tuneFoot .clear:disabled { opacity: 0.4; cursor: default; }
+.freeRow { grid-column: 1 / -1; text-align: center; padding-top: 2px; }

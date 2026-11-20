@@ -42,6 +42,7 @@ const VISITED = "nfp.visited";
 export default function Room({ beats, entry, initial, lost = false }: { beats: Beat[]; entry: Entry; initial: Beat | null; lost?: boolean }) {
   const [phase, setPhase] = useState<Phase>("arriving");
   const launchId = useRef(0);
+  const [tuneOpen, setTuneOpen] = useState(false);
   const [arrival, setArrival] = useState<number | null>(null);
   const [reduced, setReduced] = useState(false);
   const [selected, setSelected] = useState<Beat | null>(initial);
@@ -111,7 +112,9 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
     player.stop();
     // Counted only when the room actually lets go, so a called-off launch isn't a checkout.
     const token = ++launchId.current;
-    const go = () => { if (token !== launchId.current) return; track("begin_checkout", { item_id: b.id, item_name: readTitle(b.title).name, license: what, value }); window.location.href = storeUrl(b, what); };
+    const t = player.tune;
+    const tuneTag = t.tempo || t.semis ? `${t.mode}_t${t.tempo}_k${t.semis}` : undefined;
+    const go = () => { if (token !== launchId.current) return; track("begin_checkout", { item_id: b.id, item_name: readTitle(b.title).name, license: what, value, tune: tuneTag }); window.location.href = storeUrl(b, what, tuneTag); };
     setLaunch({ ms: reduced ? 0 : 900, leaving: true, to: go });
     setPhase("launching");
   }, [reduced, player]);
@@ -136,10 +139,12 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
       <div className={styles.stage}>
         <div className={styles.planetSlot}>
           <Masthead locked={phase === "landed"} />
-          <Planet onJump={jump} art={selected ? artUrl(selected) || "none" : null} spinning={player.playing} analyser={player.analyser} />
+          <Planet onJump={jump} art={selected ? artUrl(selected) || "none" : null} spinning={player.playing} analyser={player.analyser} rate={player.rate}
+            scratch={selected && player.has ? { grab: player.grab, scrub: player.scrub, release: player.release } : null}
+            onTune={selected && player.has ? () => setTuneOpen(true) : undefined} />
         </div>
         {phase !== "arriving" && (
-          <Hud beats={beats} selected={selected} lost={isLost} player={player} onSelect={select} onLaunch={onLaunch} onJump={jump} />
+          <Hud beats={beats} selected={selected} lost={isLost} player={player} tuneOpen={tuneOpen} setTuneOpen={setTuneOpen} onSelect={select} onLaunch={onLaunch} onJump={jump} />
         )}
       </div>
 

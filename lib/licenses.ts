@@ -9,16 +9,29 @@ export const LICENSES: License[] = [
   { key: "exclusive", name: "Exclusive", price: null, files: "MP3 + WAV + stems", note: "Negotiated on BeatStars." },
 ];
 
-// What each contract allows, word for word from the "usage terms" BeatStars shows in its
-// license picker (read Nov 20, 2026). The full contract is one link away and BeatStars shows
-// it again before payment. If a contract changes on BeatStars, change it here too.
-export const TERMS: Record<string, string[]> = {
+// What each contract allows, word for word from the "usage terms" in BeatStars' license picker.
+// LIVE is what the BeatStars contracts say today (read Nov 20, 2026). NEXT is the ladder in
+// docs/LICENSES.md: every tier beats the one below it, and Unlimited really is unlimited.
+// When the contracts on BeatStars match NEXT, change LADDER to "next" and nothing else.
+export const LADDER = "next" as "live" | "next"; // BeatStars contracts updated Nov 20, 2026
+
+const LIVE: Record<string, string[]> = {
   basic: ["Untagged MP3", "Used for music recording", "Distribute up to 3,000 copies", "500,000 online audio streams", "1 music video", "For-profit live performances", "Radio broadcasting rights (2 stations)"],
   premium: ["Untagged MP3 + WAV", "Used for music recording", "Distribute up to 10,000 copies", "1,000,000 online audio streams", "1 music video", "For-profit live performances", "Radio broadcasting rights (2 stations)"],
   trackout: ["MP3 + WAV + stems", "Used for music recording", "Distribute up to 10,000 copies", "500,000 online audio streams", "1 music video", "For-profit live performances", "Radio broadcasting rights (2 stations)"],
   unlimited: ["MP3 + WAV + stems", "Used for music recording", "Distribute unlimited copies", "500,000 online audio streams", "1 music video", "For-profit live performances", "Radio broadcasting rights (2 stations)"],
   exclusive: ["Price is negotiated: make an offer on BeatStars", "Unlimited copies, streams and music videos", "For-profit live performances", "Radio broadcasting rights (unlimited stations)"],
 };
+
+const NEXT: Record<string, string[]> = {
+  basic: ["Untagged MP3", "Used for music recording", "Distribute up to 3,000 copies", "500,000 online audio streams", "1 music video", "For-profit live performances", "Radio broadcasting rights (2 stations)", "Credit: Prod. NatFTP"],
+  premium: ["Untagged MP3 + WAV", "Used for music recording", "Distribute up to 10,000 copies", "1,000,000 online audio streams", "1 music video", "For-profit live performances", "Radio broadcasting rights (2 stations)", "Credit: Prod. NatFTP"],
+  trackout: ["Untagged MP3 + WAV + stems", "Used for music recording", "Distribute up to 10,000 copies", "1,000,000 online audio streams", "1 music video", "For-profit live performances", "Radio broadcasting rights (2 stations)", "Credit: Prod. NatFTP"],
+  unlimited: ["Untagged MP3 + WAV + stems", "Used for music recording", "Unlimited copies", "Unlimited online audio streams", "Unlimited music videos", "For-profit live performances", "Radio broadcasting rights (unlimited stations)", "Credit: Prod. NatFTP"],
+  exclusive: ["Price is negotiated: make an offer on BeatStars", "Untagged MP3 + WAV + stems", "Unlimited copies, streams, videos and stations", "The beat comes off the store", "Credit: Prod. NatFTP"],
+};
+
+export const TERMS = LADDER === "next" ? NEXT : LIVE;
 
 export const money = (n: number) => `$${n.toFixed(2)}`;
 

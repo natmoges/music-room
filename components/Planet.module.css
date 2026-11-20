@@ -16,8 +16,8 @@
 .label { position: absolute; left: 50%; top: 50%; width: 34%; aspect-ratio: 1; border-radius: 50%; transform: translate(-50%, -50%) scale(0.6); opacity: 0;
   background: #0c0e0f center / cover; box-shadow: 0 0 0 3px rgba(12, 14, 15, 0.9), 0 0 24px rgba(0, 0, 0, 0.6); transition: opacity 600ms ease, transform 700ms cubic-bezier(.2, .8, .2, 1); }
 .hole { position: absolute; left: 50%; top: 50%; width: 9%; aspect-ratio: 1; border-radius: 50%; transform: translate(-50%, -50%); background: #06080a; }
-.tuned .grooves { opacity: 1; animation: turn 2.6s linear infinite paused; }
-.tuned .label { opacity: 1; transform: translate(-50%, -50%) scale(1); animation: turnLabel 2.6s linear infinite paused; }
+.tuned .grooves { opacity: 1; animation: turn var(--turn, 2.6s) linear infinite paused; }
+.tuned .label { opacity: 1; transform: translate(-50%, -50%) scale(1); animation: turnLabel var(--turn, 2.6s) linear infinite paused; }
 .spinning .grooves, .spinning .label { animation-play-state: running; }
 .tuned .bands { opacity: 0.35; }
 @keyframes turn { to { transform: rotate(360deg); } }
@@ -45,3 +45,13 @@
 .shimmer { transform: scale(calc(1 + var(--high) * 0.5)); filter: brightness(calc(1 + var(--high) * 0.9)); }
 .spinning .sat { filter: drop-shadow(0 0 calc(6px + var(--high) * 10px) var(--glow)); }
 @media (prefers-reduced-motion: reduce) { .wave { display: none; } .spinning .planet { transform: none; } }
+
+/* Scratching: the hand holds the record, so it turns with the drag instead of the motor. */
+.planet { touch-action: none; }
+.scratching .grooves { animation: none; transform: rotate(var(--hand, 0deg)); }
+.scratching .label { animation: none; transform: translate(-50%, -50%) rotate(var(--hand, 0deg)); }
+.scratching .planet { cursor: grabbing; }
+.tuned .planet { cursor: grab; }
+.tuneBtn { all: unset; cursor: pointer; color: var(--cyan); pointer-events: auto; }
+.tuneBtn:focus-visible { outline: 1px solid var(--cyan); outline-offset: 4px; }
+.caption { pointer-events: none; }

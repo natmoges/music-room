@@ -8,7 +8,7 @@
   small planets from the vinyl art ride the orbit: a violet one, a ringed blue one, a red one and
   a green comet with its tail. Touch the planet and you jump to a random beat.
 */
-import { type MutableRefObject, useEffect, useRef } from "react";
+import { type MutableRefObject, useEffect, useRef, useState } from "react";
 import styles from "./Planet.module.css";
 
 /*
@@ -83,7 +83,14 @@ function useArtTint(wrap: MutableRefObject<HTMLDivElement | null>, art: string |
   }, [wrap, art]);
 }
 
-type Props = { onJump: () => void; art: string | null; spinning?: boolean; analyser?: MutableRefObject<AnalyserNode | null> };
+type Scratch = { grab: () => void; scrub: (s: number) => void; release: () => void };
+type Props = {
+  onJump: () => void; art: string | null; spinning?: boolean; analyser?: MutableRefObject<AnalyserNode | null>;
+  rate?: number; scratch?: Scratch | null; onTune?: () => void;
+};
+
+// One turn of the record at 23 RPM is about 2.6 seconds of the beat.
+const TURN = 60 / 23;
 
 const PATH = "M4,200 a196,58 -16 1,0 392,0 a196,58 -16 1,0 -392,0";
 const MOONS = [
@@ -92,13 +99,47 @@ const MOONS = [
   { id: "red", hi: "#ff9a8f", lo: "#6e1310", r: 4, dur: 38 },
 ];
 
-export default function Planet({ onJump, art, spinning = false, analyser }: Props) {
+export default function Planet({ onJump, art, spinning = false, analyser, rate = 1, scratch = null, onTune }: Props) {
   const tuned = !!art;
   const wrap = useRef<HTMLDivElement>(null);
   useListening(wrap, analyser, spinning);
   useArtTint(wrap, art);
+
+  // Hold the record and drag it round: a scratch. A tap without a drag still jumps.
+  const disc = useRef<HTMLButtonElement>(null);
+  const drag = useRef({ down: false, moved: false, angle: 0, turned: 0, x: 0, y: 0 });
+  const [scratching, setScratching] = useState(false);
+  const angleAt = (e: React.PointerEvent) => {
+    const r = disc.current!.getBoundingClientRect();
+    return Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2));
+  };
+  const onDown = (e: React.PointerEvent) => {
+    if (!scratch || !tuned) return;
+    drag.current = { down: true, moved: false, angle: angleAt(e), turned: 0, x: e.clientX, y: e.clientY };
+    disc.current?.setPointerCapture(e.pointerId);
+  };
+  const onMove = (e: React.PointerEvent) => {
+    const d = drag.current;
+    if (!d.down || !scratch) return;
+    if (!d.moved && Math.hypot(e.clientX - d.x, e.clientY - d.y) < 8) return;
+    if (!d.moved) { d.moved = true; setScratching(true); scratch.grab(); }
+    const a = angleAt(e);
+    let delta = a - d.angle;
+    if (delta > Math.PI) delta -= 2 * Math.PI;
+    if (delta < -Math.PI) delta += 2 * Math.PI;
+    d.angle = a; d.turned += delta;
+    disc.current?.style.setProperty("--hand", `${(d.turned * 180) / Math.PI}deg`);
+    scratch.scrub((delta / (2 * Math.PI)) * TURN);
+  };
+  const onUp = () => {
+    const d = drag.current;
+    if (!d.down) return;
+    d.down = false;
+    if (d.moved) { scratch?.release(); setScratching(false); justScratched.current = true; }
+  };
+  const justScratched = useRef(false);
   return (
-    <div ref={wrap} className={`${styles.wrap} ${tuned ? styles.tuned : ""} ${spinning ? styles.spinning : ""}`}>
+    <div ref={wrap} className={`${styles.wrap} ${tuned ? styles.tuned : ""} ${spinning ? styles.spinning : ""} ${scratching ? styles.scratching : ""}`} style={{ ["--turn" as string]: `${(2.6 / rate).toFixed(3)}s` }}>
       <svg className={styles.orbit} viewBox="0 0 400 400" aria-hidden="true">
         <ellipse cx="200" cy="200" rx="196" ry="58" transform="rotate(-16 200 200)" />
         <circle className={styles.sat} r="4">
@@ -128,7 +169,9 @@ export default function Planet({ onJump, art, spinning = false, analyser }: Prop
           <animateMotion dur="19s" begin="-11s" repeatCount="indefinite" rotate="auto" path={PATH} />
         </g>
       </svg>
-      <button className={styles.planet} onClick={onJump} aria-label="Jump to a random beat" title="Jump to a random beat">
+      <button ref={disc} className={styles.planet} onClick={() => { if (justScratched.current) { justScratched.current = false; return; } onJump(); }}
+        onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp}
+        aria-label="Jump to a random beat. Hold and drag the record to scratch." title="Tap: random beat · Hold and drag: scratch">
         <span className={styles.bands} />
         <span className={styles.grooves} />
         <span className={styles.label} style={art ? { backgroundImage: `url("${art}")` } : undefined}>
@@ -138,8 +181,12 @@ export default function Planet({ onJump, art, spinning = false, analyser }: Prop
       </button>
       <span className={styles.wave} aria-hidden="true" />
       <p className={styles.caption}>
-        <span>{spinning ? "NOW TURNING · 23 RPM" : tuned ? "TUNED · PRESS PLAY" : "NATFROMTHISPLANET"}</span>
-        <span>TOUCH THE PLANET · RANDOM BEAT</span>
+        {tuned && onTune ? (
+          <button className={styles.tuneBtn} onClick={onTune} aria-label="Open tempo and key">
+            {spinning ? `NOW TURNING · ${(23 * rate).toFixed(rate === 1 ? 0 : 1)} RPM` : "TUNED"} · TEMPO / KEY
+          </button>
+        ) : <span>{spinning ? "NOW TURNING · 23 RPM" : tuned ? "TUNED · PRESS PLAY" : "NATFROMTHISPLANET"}</span>}
+        <span>{tuned ? "TAP: RANDOM BEAT · DRAG: SCRATCH" : "TOUCH THE PLANET · RANDOM BEAT"}</span>
       </p>
     </div>
   );

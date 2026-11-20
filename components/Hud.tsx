@@ -21,9 +21,11 @@ type Props = {
   onLaunch: (b: Beat, what: string, value?: number) => void;
   onJump: () => void;
   player: Preview;
+  tuneOpen: boolean;
+  setTuneOpen: (open: boolean) => void;
 };
 
-export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump, player }: Props) {
+export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump, player, tuneOpen, setTuneOpen }: Props) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
   const [mood, setMood] = useState<string | null>(null);
@@ -95,6 +97,19 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
   }, [beats, query, filter, mood]);
 
   const sel = selected ? readTitle(selected.title) : null;
+  const t = player.tune;
+  const tuned = t.tempo !== 0 || t.semis !== 0;
+  const bpmNow = selected?.bpm ? Math.round(selected.bpm * player.rate) : null;
+  const vinylSemis = 12 * Math.log2(player.rate);
+  const tuneLine = tuned
+    ? [bpmNow ? `${bpmNow} BPM` : `${t.tempo > 0 ? "+" : ""}${t.tempo}% tempo`,
+       t.mode === "key" ? (t.semis ? `${t.semis > 0 ? "+" : ""}${t.semis} key` : "same key") : `vinyl (${vinylSemis > 0 ? "+" : ""}${vinylSemis.toFixed(1)} st)`].join(" · ")
+    : "";
+  const setT = (next: Partial<typeof t>) => {
+    const n = { ...t, ...next };
+    player.setTune(n);
+    if (selected) track("tune", { item_id: selected.id, tempo: n.tempo, mode: n.mode, semis: n.semis });
+  };
 
   return (
     <section className={styles.hud} aria-label="Beat catalog">
@@ -134,10 +149,42 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
             ) : (
               <p className={styles.hint}>Preview lands here soon.</p>
             )}
+            {player.has && (
+              <button className={styles.tuneToggle} aria-expanded={tuneOpen} onClick={() => setTuneOpen(!tuneOpen)}>
+                {tuned ? `Tuned: ${tuneLine}` : "Try it faster, slower or in another key"} {tuneOpen ? "▴" : "▾"}
+              </button>
+            )}
             <a className={styles.listen} href={listenUrl(selected)} target="_blank" rel="noreferrer">
               {selected.youtube ? "Watch on YouTube ↗" : "Find it on YouTube ↗"}
             </a>
           </div>
+
+          {player.has && tuneOpen && (
+            <div className={styles.tune} role="group" aria-label="Tempo and key">
+              <label className={styles.tuneRow}>
+                <span>Tempo <b>{bpmNow ? `${bpmNow} BPM` : `${t.tempo > 0 ? "+" : ""}${t.tempo}%`}</b>{bpmNow && t.tempo ? <i> ({t.tempo > 0 ? "+" : ""}{t.tempo}%)</i> : null}</span>
+                <input type="range" min={-15} max={15} step={1} value={t.tempo} onChange={(e) => setT({ tempo: Number(e.target.value) })}
+                  aria-valuetext={bpmNow ? `${bpmNow} BPM` : `${t.tempo} percent`} />
+              </label>
+              <div className={styles.tuneModes} role="radiogroup" aria-label="How the speed changes">
+                <button role="radio" aria-checked={t.mode === "key"} className={t.mode === "key" ? styles.tabOn : styles.tab} onClick={() => setT({ mode: "key" })}>KEEP KEY</button>
+                <button role="radio" aria-checked={t.mode === "vinyl"} className={t.mode === "vinyl" ? styles.tabOn : styles.tab} onClick={() => setT({ mode: "vinyl", semis: 0 })}>VINYL</button>
+              </div>
+              {t.mode === "key" ? (
+                <label className={styles.tuneRow}>
+                  <span>Key <b>{t.semis === 0 ? "original" : `${t.semis > 0 ? "+" : ""}${t.semis} semitone${Math.abs(t.semis) > 1 ? "s" : ""}`}</b>{selected.key ? <i> (from {selected.key})</i> : null}</span>
+                  <input type="range" min={-3} max={3} step={1} value={t.semis} disabled={!player.canShift} onChange={(e) => setT({ semis: Number(e.target.value) })}
+                    aria-valuetext={`${t.semis} semitones`} />
+                </label>
+              ) : (
+                <p className={styles.hint}>Vinyl: pitch rides with the speed, like a turntable ({vinylSemis > 0 ? "+" : ""}{vinylSemis.toFixed(1)} semitones).</p>
+              )}
+              <div className={styles.tuneFoot}>
+                <span className={styles.hint}>Just for trying it on. Any license is for the original file; any DAW or engineer can match this.</span>
+                <button className={styles.clear} onClick={() => setT({ tempo: 0, semis: 0 })} disabled={!tuned}>Reset</button>
+              </div>
+            </div>
+          )}
 
           {selected.free ? (
             <button className={styles.launch} onClick={() => onLaunch(selected, "free")}>Take it, free</button>
@@ -153,6 +200,13 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
                   </button>
                 </li>
               ))}
+              {/^\[FREE\]/i.test(selected.title) && (
+                <li className={styles.freeRow}>
+                  <a className={styles.listen} href={storeUrl(selected, "free download")} onClick={() => track("free_download", { item_id: selected.id, item_name: sel.name })}>
+                    Free tagged download (personal use) on BeatStars ↗
+                  </a>
+                </li>
+              )}
             </ol>
           )}
 
@@ -161,6 +215,7 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
               <p className={styles.kicker}>BEFORE YOU GO</p>
               <h2 id="terms-title" className={styles.tname}>{terms.name} · {terms.price === null ? "Offer" : money(terms.price)}</h2>
               <ul className={styles.tlist}>{(TERMS[terms.key] ?? []).map((t) => <li key={t}>{t}</li>)}</ul>
+              {tuned && <p className={styles.tnote}>You tried it at <b>{tuneLine}</b>. The file you get is the original; set the same in your session.</p>}
               <p className={styles.tnote}>Checkout, payment and file delivery happen on BeatStars. You&apos;ll pick this license there again and see the full contract before paying.</p>
               <a className={styles.listen} href={`${STORE}/licensing-info`} target="_blank" rel="noreferrer">Read the full license terms ↗</a>
               <div className={styles.tactions}>
