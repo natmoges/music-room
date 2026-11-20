@@ -33,8 +33,11 @@ function toCatalog(rows) {
       title: r[1].replace(/ \((?:Basic|Premium|Trackout|Unlimited|Exclusive)[\s\S]*\)\s*$/, "").trim(),
       art: (r[15].split("/track/artwork/")[1] ?? ""),
       prices: [],
+      licenses: {},
     };
     beat.prices.push(price);
+    const kind = r[1].match(/\((Basic|Premium|Trackout|Unlimited|Exclusive)/);
+    if (kind) beat.licenses[kind[1].toLowerCase()] = price;
     beats.set(id, beat);
   }
   return [...beats.values()].map(({ prices, ...b }) => ({ ...b, free: prices.every((p) => p === 0) }));

@@ -21,6 +21,7 @@ export function GET() {
     tags: b.tags,
     youtube: b.youtube,
     preview: b.preview ? new URL(b.preview, SITE).toString() : null,
+    licenses: b.licenses ?? null,
     visualizer: b.visualizer,
   }));
   return Response.json({ version: 1, generated: new Date().toISOString(), count: beats.length, beats });

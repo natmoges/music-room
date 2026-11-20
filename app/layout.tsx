@@ -5,9 +5,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
-  title: { default: "NatFromThisPlanet", template: "%s · NatFromThisPlanet" },
+  title: { default: "NatFromThisPlanet · Beats from Philadelphia, 215", template: "%s · NatFromThisPlanet" },
   description: "Beats from Philadelphia, 215. The music room of NatFTP: drop out of hyperspace, pick a beat, lease it or take it free.",
-  openGraph: { siteName: "NatFromThisPlanet", type: "website" },
+  alternates: { canonical: "/" },
+  openGraph: { siteName: "NatFromThisPlanet", type: "website", images: [{ url: "/og.png", width: 1200, height: 630 }] },
+  twitter: { card: "summary_large_image", site: "@215_Nat", images: ["/og.png"] },
 };
 
 export const viewport: Viewport = { themeColor: "#06080a" };

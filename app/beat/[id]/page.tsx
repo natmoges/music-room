@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Room from "@/components/Room";
 import { ALL_BEATS, BEATS, findBeat } from "@/lib/beats";
-import { artUrl, readTitle } from "@/lib/catalog";
+import { artUrl, readTitle, storeUrl } from "@/lib/catalog";
+import { licensesFor } from "@/lib/licenses";
+import { SITE } from "@/lib/site";
 
 // Every beat answers at two addresses: /beat/<id> (the YouTube links) and
 // /beat/<slug>-<id> (the BeatStars links). Both are written for every beat BeatStars has,
@@ -19,11 +21,28 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     title: name,
     description: `${name}${after ? ` · ${after}` : ""}. ${beat.free ? "Free download" : "Lease it"} from NatFromThisPlanet, Philadelphia 215.`,
     alternates: { canonical: `/beat/${beat.id}` },
-    openGraph: { images: beat.art ? [artUrl(beat)] : [] },
+    openGraph: { type: "music.song", images: beat.art ? [artUrl(beat)] : [], audio: beat.preview ? [`${SITE}${beat.preview}`] : undefined },
+    twitter: { card: "summary_large_image", images: beat.art ? [artUrl(beat)] : [] },
   };
 }
 
 export default async function BeatPage({ params }: { params: Promise<{ id: string }> }) {
   const beat = findBeat((await params).id) ?? null;
-  return <Room beats={BEATS} entry="beat" initial={beat} lost={!beat} />;
+  if (!beat) return <Room beats={BEATS} entry="beat" initial={null} lost />;
+  const { name, after } = readTitle(beat.title);
+  // What search engines read: the beat as a recording, with its leases as offers.
+  const ld = {
+    "@context": "https://schema.org", "@type": "MusicRecording", name, description: after || undefined,
+    url: `${SITE}/beat/${beat.id}`, image: beat.art ? artUrl(beat) : undefined,
+    byArtist: { "@type": "MusicGroup", name: "NatFromThisPlanet", url: SITE },
+    audio: beat.preview ? { "@type": "AudioObject", contentUrl: `${SITE}${beat.preview}`, encodingFormat: "audio/mpeg" } : undefined,
+    offers: beat.free ? { "@type": "Offer", price: 0, priceCurrency: "USD", url: storeUrl(beat) }
+      : licensesFor(beat.licenses).filter((l) => l.price !== null).map((l) => ({ "@type": "Offer", name: l.name, price: l.price, priceCurrency: "USD", url: storeUrl(beat) })),
+  };
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
+      <Room beats={BEATS} entry="beat" initial={beat} lost={false} />
+    </>
+  );
 }

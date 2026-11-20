@@ -2,10 +2,10 @@
 
 /* The HUD: where everything happens. Read the catalog, search it, pick a beat, open the
    liner notes, and launch toward checkout. Lost signal lives here too. */
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { type Beat, artUrl, listenUrl, readTitle } from "@/lib/catalog";
 import type { Preview } from "./usePreview";
-import { LICENSES, money } from "@/lib/licenses";
+import { licensesFor, money } from "@/lib/licenses";
 import { LINKS, PRO_ROOM, TUNE_IN } from "@/lib/site";
 import styles from "./Hud.module.css";
 
@@ -26,13 +26,16 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
   const [shown, setShown] = useState(PAGE);
+  const focusRef = useRef<HTMLElement>(null);
 
   const results = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    // Every word has to land somewhere: title, artist, mood, tags, BPM or key.
+    const words = query.toLowerCase().split(/\s+/).filter(Boolean);
     return beats.filter((b) => {
       if (filter === "free" && !b.free) return false;
       if (filter === "lease" && b.free) return false;
-      return !q || b.title.toLowerCase().includes(q);
+      const hay = [b.title, ...b.mood, ...b.tags, b.bpm ? `${b.bpm} ${b.bpm}bpm` : "", b.key ?? ""].join(" ").toLowerCase();
+      return words.every((w) => hay.includes(w));
     });
   }, [beats, query, filter]);
 
@@ -55,13 +58,13 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
       )}
 
       {selected && sel && (
-        <article className={styles.focus} aria-live="polite">
+        <article ref={focusRef} className={styles.focus} aria-live="polite">
           {selected.art && (
             // eslint-disable-next-line @next/next/no-img-element
             <img className={styles.art} src={artUrl(selected)} alt="" width={96} height={96} />
           )}
           <div className={styles.meta}>
-            <p className={styles.kicker}>{selected.free ? "FREE DOWNLOAD" : "NOW TUNED"}</p>
+            <p className={styles.kicker}>{selected.free ? "FREE DOWNLOAD" : "NOW TUNED"}{selected.bpm ? ` · ${selected.bpm} BPM` : ""}{selected.key ? ` · ${selected.key}` : ""}</p>
             <h1 className={styles.name}>{sel.name}</h1>
             {sel.after && <p className={styles.after}>{sel.after}</p>}
             {player.has ? (
@@ -77,7 +80,7 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
               <p className={styles.hint}>Preview lands here soon.</p>
             )}
             <a className={styles.listen} href={listenUrl(selected)} target="_blank" rel="noreferrer">
-              Hear it on the channel ↗
+              {selected.youtube ? "Watch on YouTube ↗" : "Find it on YouTube ↗"}
             </a>
           </div>
 
@@ -85,11 +88,11 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
             <button className={styles.launch} onClick={() => onLaunch(selected, "free")}>Take it, free</button>
           ) : (
             <ol className={styles.notes}>
-              {LICENSES.map((l) => (
+              {licensesFor(selected.licenses).map((l) => (
                 <li key={l.name}>
                   <button className={styles.license} onClick={() => onLaunch(selected, l.name)}>
                     <span className={styles.lname}>{l.name}</span>
-                    <span className={styles.lfiles}>{l.files}</span>
+                    <span className={styles.lfiles}>{l.files} · {l.note}</span>
                     <span className={styles.lprice}>{l.price === null ? "Offer" : money(l.price)}</span>
                   </button>
                 </li>
@@ -102,11 +105,12 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
       <div className={styles.controls}>
         <label className={styles.search}>
           <span className={styles.srOnly}>Search the transmission</span>
-          <input value={query} onChange={(e) => { setQuery(e.target.value); setShown(PAGE); }} placeholder="Search the transmission: artist, mood, title" />
+          <input value={query} onChange={(e) => { setQuery(e.target.value); setShown(PAGE); }} placeholder="Search beats: artist, title, BPM, key" />
+          <span className={styles.srOnly} role="status">{results.length} beats</span>
         </label>
-        <div className={styles.tabs} role="tablist" aria-label="Filter">
-          {(["all", "lease", "free"] as Filter[]).map((f) => (
-            <button key={f} role="tab" aria-selected={filter === f} className={filter === f ? styles.tabOn : styles.tab} onClick={() => { setFilter(f); setShown(PAGE); }}>
+        <div className={styles.tabs} role="group" aria-label="Filter">
+          {(["all", "lease", "free"] as Filter[]).filter((f) => f !== "free" || beats.some((b) => b.free)).map((f) => (
+            <button key={f} aria-pressed={filter === f} className={filter === f ? styles.tabOn : styles.tab} onClick={() => { setFilter(f); setShown(PAGE); }}>
               {f.toUpperCase()}
             </button>
           ))}
@@ -118,7 +122,7 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
           const t = readTitle(b.title);
           return (
             <li key={b.id}>
-              <button className={selected?.id === b.id ? styles.rowOn : styles.row} onClick={() => onSelect(b)}>
+              <button className={selected?.id === b.id ? styles.rowOn : styles.row} aria-current={selected?.id === b.id ? "true" : undefined} onClick={() => { onSelect(b); focusRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }); }}>
                 <span className={styles.rname}>{t.name}</span>
                 <span className={styles.rafter}>{t.after}</span>
                 <span className={styles.rtag}>{b.free ? "FREE" : "LEASE"}</span>
@@ -126,7 +130,7 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
             </li>
           );
         })}
-        {results.length === 0 && <li className={styles.empty}>No signal for &ldquo;{query}&rdquo;.</li>}
+        {results.length === 0 && <li className={styles.empty}>{query ? <>No signal for &ldquo;{query}&rdquo;. <button className={styles.clear} onClick={() => setQuery("")}>Clear search</button></> : "Nothing here yet."}</li>}
       </ul>
       {results.length > shown && (
         <button className={styles.ghost} onClick={() => setShown((n) => n + PAGE)}>

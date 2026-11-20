@@ -7,6 +7,7 @@ export type Beat = {
   title: string;
   art: string;
   free: boolean;
+  licenses?: Record<string, number>; // license key -> price, from the feed
   bpm: number | null;
   key: string | null;
   mood: string[];

@@ -23,7 +23,7 @@
   everything bends toward browsing the catalog and acting on it.
 */
 import { useCallback, useEffect, useState } from "react";
-import { type Beat, artUrl, storeUrl } from "@/lib/catalog";
+import { type Beat, artUrl, readTitle, storeUrl } from "@/lib/catalog";
 import Hyperspace from "./Hyperspace";
 import CrtBoot from "./CrtBoot";
 import Starfield from "./Starfield";
@@ -62,7 +62,7 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
     setReduced(rm);
     let seen = false;
     try { seen = localStorage.getItem(VISITED) === "1"; localStorage.setItem(VISITED, "1"); } catch { /* private mode */ }
-    setArrival(entry === "beat" || lost ? 500 : seen ? 800 : 2000);
+    setArrival(entry === "beat" || lost ? 500 : seen ? 700 : 1400);
   }, [entry, lost]);
 
   // Coming back with the browser's Back button. The browser restores the page exactly as it
@@ -79,10 +79,22 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
 
   const landed = useCallback(() => setPhase("landed"), []);
 
+  // The jump never holds the beats hostage: any tap or key lands you now.
+  useEffect(() => {
+    if (phase !== "arriving") return;
+    const skip = () => setPhase("landed");
+    window.addEventListener("pointerdown", skip);
+    window.addEventListener("keydown", skip);
+    return () => { window.removeEventListener("pointerdown", skip); window.removeEventListener("keydown", skip); };
+  }, [phase]);
+
   const select = useCallback((b: Beat, play = true) => {
     setSelected(b);
     setIsLost(false);
     try { history.replaceState(null, "", `/beat/${b.id}`); } catch { /* ignore */ }
+    document.title = `${readTitle(b.title).name} · NatFromThisPlanet`;
+    document.querySelector('meta[name="robots"]')?.remove();
+    document.querySelector('link[rel="canonical"]')?.setAttribute("href", `${location.origin}/beat/${b.id}`);
     track("select_item", { item_id: b.id, item_name: b.title });
     if (play && b.preview) player.playWhenReady(b.id);
   }, [player]);
@@ -98,9 +110,9 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
   }, [beats, reduced, select, selected, player]);
 
   const onLaunch = useCallback((b: Beat, what: string) => {
-    track("begin_checkout", { item_id: b.id, item_name: b.title, license: what });
     player.stop();
-    const go = () => { window.location.href = storeUrl(b); };
+    // Counted only when the room actually lets go, so a called-off launch isn't a checkout.
+    const go = () => { track("begin_checkout", { item_id: b.id, item_name: b.title, license: what }); window.location.href = storeUrl(b); };
     setLaunch({ ms: reduced ? 0 : 900, leaving: true, to: go });
     setPhase("launching");
   }, [reduced, player]);
@@ -141,7 +153,7 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
           {launch.ms > 0
             ? <Hyperspace mode="launch" duration={launch.ms} onDone={launch.to} />
             : <span className={styles.blink} aria-hidden="true" />}
-          {launch.leaving && <span className={styles.cancelHint}>Heading to checkout · tap to stay</span>}
+          {launch.leaving && <span className={styles.cancelHint}>Opening BeatStars to check out · tap to stay</span>}
         </button>
       )}
     </main>
