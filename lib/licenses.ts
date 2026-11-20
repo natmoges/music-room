@@ -5,18 +5,19 @@ export const LICENSES: License[] = [
   { key: "basic", name: "MP3 lease", price: 29.99, files: "Untagged MP3", note: "Limits in the license terms." },
   { key: "premium", name: "WAV lease", price: 49.99, files: "MP3 + WAV", note: "Limits in the license terms." },
   { key: "trackout", name: "Trackout", price: 99.99, files: "MP3 + WAV + stems", note: "Stems for your engineer. Limits in the terms." },
-  { key: "unlimited", name: "Unlimited", price: 199.99, files: "MP3 + WAV + stems", note: "Higher limits. See the terms." },
+  { key: "unlimited", name: "Unlimited", price: 199.99, files: "MP3 + WAV + stems", note: "Unlimited copies. See the terms." },
   { key: "exclusive", name: "Exclusive", price: null, files: "MP3 + WAV + stems", note: "Negotiated on BeatStars." },
 ];
 
-// What each license says, word for word from the store's Licensing Info page (natftp.beatstars.com/licensing-info).
-// The full contract is one link away and BeatStars shows it again before payment.
+// What each contract allows, word for word from the "usage terms" BeatStars shows in its
+// license picker (read Nov 20, 2026). The full contract is one link away and BeatStars shows
+// it again before payment. If a contract changes on BeatStars, change it here too.
 export const TERMS: Record<string, string[]> = {
-  basic: ["Untagged MP3", "All streaming services", "Producer keeps ownership of the beat", "Must credit the producer"],
-  premium: ["Untagged MP3 + WAV", "All streaming services", "Producer keeps ownership of the beat", "Must credit the producer"],
-  trackout: ["For music recording", "Distribute up to 10,000 copies", "500,000 online audio streams", "1 music video", "For-profit live performances", "Radio broadcasting (2 stations)"],
-  unlimited: ["Untagged MP3 + WAV + stems", "All streaming services", "Producer keeps ownership of the beat", "Must credit the producer"],
-  exclusive: ["Price is negotiated: make an offer on BeatStars", "Terms are set in the exclusive contract"],
+  basic: ["Untagged MP3", "Used for music recording", "Distribute up to 3,000 copies", "500,000 online audio streams", "1 music video", "For-profit live performances", "Radio broadcasting rights (2 stations)"],
+  premium: ["Untagged MP3 + WAV", "Used for music recording", "Distribute up to 10,000 copies", "1,000,000 online audio streams", "1 music video", "For-profit live performances", "Radio broadcasting rights (2 stations)"],
+  trackout: ["MP3 + WAV + stems", "Used for music recording", "Distribute up to 10,000 copies", "500,000 online audio streams", "1 music video", "For-profit live performances", "Radio broadcasting rights (2 stations)"],
+  unlimited: ["MP3 + WAV + stems", "Used for music recording", "Distribute unlimited copies", "500,000 online audio streams", "1 music video", "For-profit live performances", "Radio broadcasting rights (2 stations)"],
+  exclusive: ["Price is negotiated: make an offer on BeatStars", "Unlimited copies, streams and music videos", "For-profit live performances", "Radio broadcasting rights (unlimited stations)"],
 };
 
 export const money = (n: number) => `$${n.toFixed(2)}`;

@@ -72,6 +72,11 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
 
   const landed = useCallback(() => setPhase("landed"), []);
 
+  // A beat opened straight from a link (YouTube, a share) counts as viewed once, on arrival.
+  useEffect(() => {
+    if (initial) track("view_item", { item_id: initial.id, item_name: readTitle(initial.title).name, entry });
+  }, [initial, entry]);
+
   // The jump never holds the beats hostage: any tap or key lands you now.
   useEffect(() => {
     if (phase !== "arriving") return;
