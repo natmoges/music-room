@@ -12,6 +12,7 @@ import { type MutableRefObject, useCallback, useEffect, useRef, useState } from 
 import { type Beat, artUrl, readTitle } from "@/lib/catalog";
 import { track } from "@/lib/track";
 import { makeShifter } from "@/lib/shifter";
+import { type ScratchEngine, makeScratch } from "@/lib/scratch";
 
 // Trying the beat on: tempo (±15%), in "key" mode (pitch held) or "vinyl" mode (pitch rides
 // with speed, like a turntable), plus a key shift of ±3 semitones in key mode. Nothing here
@@ -57,7 +58,8 @@ export function usePreview(beat: Beat | null): Preview {
   const tuneRef = useRef<Tune>(UNTUNED);
   const shifter = useRef<AudioWorkletNode | null>(null);
   const [canShift, setCanShift] = useState(false);
-  const scratch = useRef({ on: false, was: false, grain: 0 as ReturnType<typeof setTimeout> | 0 });
+  const scratch = useRef({ on: false, was: false, grain: 0 as ReturnType<typeof setTimeout> | 0, last: 0, idle: 0 as ReturnType<typeof setTimeout> | 0 });
+  const engine = useRef<ScratchEngine | null>(null);
   const rate = 1 + tune.tempo / 100;
 
   // Apply a tune to the element and the shifter.
@@ -124,6 +126,12 @@ export function usePreview(beat: Beat | null): Preview {
           src.disconnect(); src.connect(shift); shift.connect(node);
           shifter.current = shift; setCanShift(true); apply(tuneRef.current);
         });
+        // The scratch engine plays into the same analyser, so the planet still reacts while scratching.
+        void makeScratch(c, node).then((eng) => {
+          engine.current = eng;
+          const b = current.current;
+          if (eng && b?.preview) void eng.load(b.preview);
+        });
       }
       if (ctx.current.state === "suspended") await ctx.current.resume();
     } catch { /* no analyser: the audio still plays, the planet just doesn't react */ }
@@ -146,6 +154,7 @@ export function usePreview(beat: Beat | null): Preview {
     if (!beat?.preview) { a.removeAttribute("src"); a.load(); return; }
     a.src = beat.preview;
     apply(tuneRef.current);
+    if (engine.current) void engine.current.load(beat.preview);
     if ("mediaSession" in navigator) {
       const { name, after } = readTitle(beat.title);
       navigator.mediaSession.metadata = new MediaMetadata({
@@ -175,12 +184,24 @@ export function usePreview(beat: Beat | null): Preview {
   const grab = useCallback(() => {
     const a = audio.current;
     if (!a || !a.src || scratch.current.on) return;
-    scratch.current.on = true; scratch.current.was = !a.paused;
+    scratch.current.on = true; scratch.current.was = !a.paused; scratch.current.last = performance.now();
     a.pause();
+    if (engine.current?.ready()) engine.current.start(a.currentTime);
   }, []);
   const scrub = useCallback((s: number) => {
     const a = audio.current;
     if (!a || !scratch.current.on || !a.duration) return;
+    const eng = engine.current;
+    if (eng?.ready()) {
+      // Speed of the hand, in seconds of beat per second of time; hold still and it stops.
+      const now = performance.now();
+      const dt = Math.max(8, now - scratch.current.last) / 1000;
+      scratch.current.last = now;
+      eng.setRate(Math.max(-4, Math.min(4, s / dt)));
+      if (scratch.current.idle) clearTimeout(scratch.current.idle);
+      scratch.current.idle = setTimeout(() => eng.setRate(0), 60);
+      return;
+    }
     a.currentTime = Math.max(0, Math.min(a.duration - 0.05, a.currentTime + (s < 0 ? s * 1.6 : 0)));
     a.preservesPitch = false;
     a.playbackRate = Math.max(0.5, Math.min(3, Math.abs(s) * 18));
@@ -192,9 +213,13 @@ export function usePreview(beat: Beat | null): Preview {
     const a = audio.current;
     if (!a || !scratch.current.on) return;
     if (scratch.current.grain) clearTimeout(scratch.current.grain);
+    if (scratch.current.idle) clearTimeout(scratch.current.idle);
     scratch.current.on = false;
     apply(tuneRef.current);
-    if (scratch.current.was) void start(); else a.pause();
+    const resume = () => { if (scratch.current.was) void start(); else a.pause(); };
+    const eng = engine.current;
+    if (eng?.ready()) void eng.stop().then((pos) => { if (pos >= 0 && a.duration) a.currentTime = Math.min(pos, a.duration - 0.05); resume(); });
+    else resume();
   }, [apply, start]);
 
   // A beat picked from the list starts on its own (the tap is the permission to play).
