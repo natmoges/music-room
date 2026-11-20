@@ -55,3 +55,9 @@
 .tuneBtn { all: unset; cursor: pointer; color: var(--cyan); pointer-events: auto; }
 .tuneBtn:focus-visible { outline: 1px solid var(--cyan); outline-offset: 4px; }
 .caption { pointer-events: none; }
+
+/* SAT_1: the way to a random beat. */
+.satBtn { pointer-events: auto; cursor: pointer; outline: none; }
+.satBtn:focus-visible .sat { stroke: var(--cyan); stroke-width: 2; }
+.satTip { font: 9px var(--mono); letter-spacing: 0.16em; fill: var(--cyan); pointer-events: none; }
+.orbit ellipse, .moon { pointer-events: none; }

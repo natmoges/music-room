@@ -141,7 +141,8 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
           <Masthead locked={phase === "landed"} />
           <Planet onJump={jump} art={selected ? artUrl(selected) || "none" : null} spinning={player.playing} analyser={player.analyser} rate={player.rate}
             scratch={selected && player.has ? { grab: player.grab, scrub: player.scrub, release: player.release, onNeedle: player.onNeedle } : null}
-            onTune={selected && player.has ? () => setTuneOpen(true) : undefined} />
+            onTune={selected && player.has ? () => setTuneOpen(true) : undefined}
+            onToggle={selected && player.has ? player.toggle : undefined} />
         </div>
         {phase !== "arriving" && (
           <Hud beats={beats} selected={selected} lost={isLost} player={player} tuneOpen={tuneOpen} setTuneOpen={setTuneOpen} onSelect={select} onLaunch={onLaunch} onJump={jump} />
