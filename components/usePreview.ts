@@ -40,6 +40,8 @@ export type Preview = {
   grab: () => void;
   scrub: (seconds: number) => void;
   release: () => void;
+  onNeedle: (cb: ((seconds: number, rate: number) => void) | null) => void;
+  needleNow: () => number;
 };
 
 export function usePreview(beat: Beat | null): Preview {
@@ -178,49 +180,59 @@ export function usePreview(beat: Beat | null): Preview {
     if (a && a.duration) a.currentTime = Math.max(0, Math.min(1, f)) * a.duration;
   }, []);
 
-  // Scratch: pause under the hand; each drag moves the needle and plays a short grain, so a
-  // push forward sounds like the record running and a pull back stutters backwards. Let go and
-  // it carries on exactly where the hand left it, at the tune it was set to.
+  // The hand on the record. Press and hold: like a palm laid lightly on a spinning platter, the
+  // record drags down over about a second, pitch falling with it, until it's choked to a stop.
+  // Move while holding: the record follows the hand, forward or back. Hold still again: it
+  // settles to a stop under the hand. Let go: the motor pulls it back up to speed and the
+  // normal player takes over from wherever the needle is. Grab again mid spin-up: the hand wins.
+  const handoff = useRef<ReturnType<typeof setTimeout> | 0>(0);
   const grab = useCallback(() => {
     const a = audio.current;
     if (!a || !a.src || scratch.current.on) return;
-    scratch.current.on = true; scratch.current.was = !a.paused; scratch.current.last = performance.now();
-    a.pause();
-    if (engine.current?.ready()) engine.current.start(a.currentTime);
+    scratch.current.on = true; scratch.current.last = performance.now();
+    const eng = engine.current;
+    if (handoff.current) { clearTimeout(handoff.current); handoff.current = 0; eng?.brake(0.9); return; }
+    scratch.current.was = !a.paused;
+    if (eng?.ready() && !a.paused) {
+      eng.start(a.currentTime, a.playbackRate);
+      a.pause();
+      eng.brake(1.3); // the palm: about 1.3 s from full speed to a choke
+    } else {
+      a.pause();
+      if (eng?.ready()) eng.start(a.currentTime, 0);
+    }
   }, []);
   const scrub = useCallback((s: number) => {
     const a = audio.current;
-    if (!a || !scratch.current.on || !a.duration) return;
     const eng = engine.current;
-    if (eng?.ready()) {
-      // Speed of the hand, in seconds of beat per second of time; hold still and it stops.
-      const now = performance.now();
-      const dt = Math.max(8, now - scratch.current.last) / 1000;
-      scratch.current.last = now;
-      eng.setRate(Math.max(-4, Math.min(4, s / dt)));
-      if (scratch.current.idle) clearTimeout(scratch.current.idle);
-      scratch.current.idle = setTimeout(() => eng.setRate(0), 60);
-      return;
-    }
-    a.currentTime = Math.max(0, Math.min(a.duration - 0.05, a.currentTime + (s < 0 ? s * 1.6 : 0)));
-    a.preservesPitch = false;
-    a.playbackRate = Math.max(0.5, Math.min(3, Math.abs(s) * 18));
-    if (a.paused) void a.play().catch(() => {});
-    if (scratch.current.grain) clearTimeout(scratch.current.grain);
-    scratch.current.grain = setTimeout(() => a.pause(), 70);
+    if (!a || !scratch.current.on || !eng?.ready()) return;
+    const now = performance.now();
+    const dt = Math.max(8, now - scratch.current.last) / 1000;
+    scratch.current.last = now;
+    eng.setRate(Math.max(-4, Math.min(4, s / dt)), 0.012);
+    if (scratch.current.idle) clearTimeout(scratch.current.idle);
+    scratch.current.idle = setTimeout(() => eng.setRate(0, 0.09), 70);
   }, []);
   const release = useCallback(() => {
     const a = audio.current;
     if (!a || !scratch.current.on) return;
-    if (scratch.current.grain) clearTimeout(scratch.current.grain);
     if (scratch.current.idle) clearTimeout(scratch.current.idle);
     scratch.current.on = false;
-    apply(tuneRef.current);
-    const resume = () => { if (scratch.current.was) void start(); else a.pause(); };
     const eng = engine.current;
-    if (eng?.ready()) void eng.stop().then((pos) => { if (pos >= 0 && a.duration) a.currentTime = Math.min(pos, a.duration - 0.05); resume(); });
-    else resume();
+    const target = 1 + tuneRef.current.tempo / 100;
+    const finish = () => {
+      handoff.current = 0;
+      apply(tuneRef.current);
+      const go = () => { if (scratch.current.was) void start(); else a.pause(); };
+      if (eng?.ready()) void eng.stop().then((pos) => { if (pos >= 0 && a.duration) a.currentTime = Math.min(pos, a.duration - 0.05); go(); });
+      else go();
+    };
+    if (eng?.ready() && scratch.current.was) {
+      eng.setRate(target, 0.18); // the motor catches it and pulls it back to speed
+      handoff.current = setTimeout(finish, 520);
+    } else finish();
   }, [apply, start]);
+  const onNeedle = useCallback((cb: ((seconds: number, rate: number) => void) | null) => { engine.current?.onPos(cb); }, []);
 
   // A beat picked from the list starts on its own (the tap is the permission to play).
   const playWhenReady = useCallback((id: string) => { pending.current = id; }, []);
@@ -237,5 +249,5 @@ export function usePreview(beat: Beat | null): Preview {
     return () => window.removeEventListener("keydown", key);
   }, [toggle]);
 
-  return { playing: playing || scratch.current.on, blocked, progress, duration, has: !!beat?.preview, toggle, stop, seek, playWhenReady, analyser, tune, setTune, canShift, rate, grab, scrub, release };
+  return { playing: playing || scratch.current.on, blocked, progress, duration, has: !!beat?.preview, toggle, stop, seek, playWhenReady, analyser, tune, setTune, canShift, rate, grab, scrub, release, onNeedle, needleNow: () => audio.current?.currentTime ?? 0 };
 }

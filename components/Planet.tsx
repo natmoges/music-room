@@ -83,7 +83,7 @@ function useArtTint(wrap: MutableRefObject<HTMLDivElement | null>, art: string |
   }, [wrap, art]);
 }
 
-type Scratch = { grab: () => void; scrub: (s: number) => void; release: () => void };
+type Scratch = { grab: () => void; scrub: (s: number) => void; release: () => void; onNeedle?: (cb: ((s: number, r: number) => void) | null) => void };
 type Props = {
   onJump: () => void; art: string | null; spinning?: boolean; analyser?: MutableRefObject<AnalyserNode | null>;
   rate?: number; scratch?: Scratch | null; onTune?: () => void;
@@ -105,37 +105,61 @@ export default function Planet({ onJump, art, spinning = false, analyser, rate =
   useListening(wrap, analyser, spinning);
   useArtTint(wrap, art);
 
-  // Hold the record and drag it round: a scratch. A tap without a drag still jumps.
+  // The hand on the record: press to brake it, drag to scratch, let go to spin back up. A quick
+  // tap without a drag still jumps to a random beat. While the hand is on, the record is drawn
+  // from where the needle really is, so it visibly slows, stops and turns with the hand.
   const disc = useRef<HTMLButtonElement>(null);
-  const drag = useRef({ down: false, moved: false, angle: 0, turned: 0, x: 0, y: 0 });
+  const drag = useRef({ down: false, moved: false, angle: 0, turned: 0, x: 0, y: 0, t: 0, base: 0, needle0: -1 });
   const [scratching, setScratching] = useState(false);
   const angleAt = (e: React.PointerEvent) => {
     const r = disc.current!.getBoundingClientRect();
     return Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2));
   };
+  const currentTurn = () => {
+    const g = disc.current?.querySelector(`.${styles.grooves}`);
+    const m = g ? getComputedStyle(g).transform : "none";
+    if (!m || m === "none") return 0;
+    const v = m.match(/matrix\(([^)]+)\)/)?.[1].split(",").map(Number);
+    return v ? (Math.atan2(v[1], v[0]) * 180) / Math.PI : 0;
+  };
   const onDown = (e: React.PointerEvent) => {
     if (!scratch || !tuned) return;
-    drag.current = { down: true, moved: false, angle: angleAt(e), turned: 0, x: e.clientX, y: e.clientY };
+    drag.current = { down: true, moved: false, angle: angleAt(e), turned: 0, x: e.clientX, y: e.clientY, t: performance.now(), base: currentTurn(), needle0: -1 };
     disc.current?.setPointerCapture(e.pointerId);
+    disc.current?.style.setProperty("--hand", `${drag.current.base}deg`);
+    setScratching(true);
+    scratch.onNeedle?.((sec) => {
+      const d = drag.current;
+      if (d.needle0 < 0) d.needle0 = sec;
+      disc.current?.style.setProperty("--hand", `${d.base + ((sec - d.needle0) / TURN) * 360}deg`);
+    });
+    scratch.grab();
   };
   const onMove = (e: React.PointerEvent) => {
     const d = drag.current;
     if (!d.down || !scratch) return;
-    if (!d.moved && Math.hypot(e.clientX - d.x, e.clientY - d.y) < 8) return;
-    if (!d.moved) { d.moved = true; setScratching(true); scratch.grab(); }
+    if (!d.moved && Math.hypot(e.clientX - d.x, e.clientY - d.y) < 6) { d.angle = angleAt(e); return; }
+    d.moved = true;
     const a = angleAt(e);
     let delta = a - d.angle;
     if (delta > Math.PI) delta -= 2 * Math.PI;
     if (delta < -Math.PI) delta += 2 * Math.PI;
-    d.angle = a; d.turned += delta;
-    disc.current?.style.setProperty("--hand", `${(d.turned * 180) / Math.PI}deg`);
+    d.angle = a;
     scratch.scrub((delta / (2 * Math.PI)) * TURN);
   };
   const onUp = () => {
     const d = drag.current;
     if (!d.down) return;
     d.down = false;
-    if (d.moved) { scratch?.release(); setScratching(false); justScratched.current = true; }
+    const tap = !d.moved && performance.now() - d.t < 220;
+    scratch?.release();
+    // Hand the turning back to the motor from the angle the hand left it at.
+    const turn = parseFloat(disc.current?.style.getPropertyValue("--hand") || "0");
+    const period = 2.6 / rate;
+    disc.current?.style.setProperty("--delay", `${-(((turn % 360) + 360) % 360 / 360) * period}s`);
+    setTimeout(() => scratch?.onNeedle?.(null), 600);
+    setScratching(false);
+    justScratched.current = !tap;
   };
   const justScratched = useRef(false);
   return (

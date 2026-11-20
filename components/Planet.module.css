@@ -16,8 +16,8 @@
 .label { position: absolute; left: 50%; top: 50%; width: 34%; aspect-ratio: 1; border-radius: 50%; transform: translate(-50%, -50%) scale(0.6); opacity: 0;
   background: #0c0e0f center / cover; box-shadow: 0 0 0 3px rgba(12, 14, 15, 0.9), 0 0 24px rgba(0, 0, 0, 0.6); transition: opacity 600ms ease, transform 700ms cubic-bezier(.2, .8, .2, 1); }
 .hole { position: absolute; left: 50%; top: 50%; width: 9%; aspect-ratio: 1; border-radius: 50%; transform: translate(-50%, -50%); background: #06080a; }
-.tuned .grooves { opacity: 1; animation: turn var(--turn, 2.6s) linear infinite paused; }
-.tuned .label { opacity: 1; transform: translate(-50%, -50%) scale(1); animation: turnLabel var(--turn, 2.6s) linear infinite paused; }
+.tuned .grooves { opacity: 1; animation: turn var(--turn, 2.6s) linear var(--delay, 0s) infinite paused; }
+.tuned .label { opacity: 1; transform: translate(-50%, -50%) scale(1); animation: turnLabel var(--turn, 2.6s) linear var(--delay, 0s) infinite paused; }
 .spinning .grooves, .spinning .label { animation-play-state: running; }
 .tuned .bands { opacity: 0.35; }
 @keyframes turn { to { transform: rotate(360deg); } }
