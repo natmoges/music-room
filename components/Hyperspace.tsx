@@ -49,6 +49,7 @@ export default function Hyperspace({ mode, duration, onDone }: Props) {
     const EXIT = 1100; // the slow-motion exit
     const start = performance.now();
     let raf = 0, finished = false;
+    let doneTimer: ReturnType<typeof setTimeout> | undefined;
 
     const frame = (now: number) => {
       const t = now - start;
@@ -57,7 +58,7 @@ export default function Hyperspace({ mode, duration, onDone }: Props) {
         speed = 0.004 + easeIn(t / duration) * 0.09; // faster and faster
       } else if (mode === "launch") {
         speed = 0.12;
-        if (!finished) { finished = true; flashRef.current?.classList.add(styles.flashOn); setTimeout(() => doneRef.current(), 260); }
+        if (!finished) { finished = true; flashRef.current?.classList.add(styles.flashOn); doneTimer = setTimeout(() => doneRef.current(), 260); }
       } else {
         const e = Math.min((t - duration) / EXIT, 1);
         if (e < 0.02 && flashRef.current && !flashRef.current.classList.contains(styles.flashOn)) {
@@ -91,7 +92,7 @@ export default function Hyperspace({ mode, duration, onDone }: Props) {
       raf = requestAnimationFrame(frame);
     };
     raf = requestAnimationFrame(frame);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
+    return () => { if (doneTimer) clearTimeout(doneTimer); cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
   }, [mode, duration]);
 
   return (

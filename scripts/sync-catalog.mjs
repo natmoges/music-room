@@ -26,7 +26,8 @@ function toCatalog(rows) {
     const id = r[0].split("-")[1];
     const link = r[14] ?? "";
     const fullSlug = link.split("/beat/")[1] ?? id;
-    const price = parseFloat(r[19]) || 0;
+    const price = Number.parseFloat(r[19]);
+    if (!Number.isFinite(price) || price < 0) throw new Error(`bad price "${r[19]}" on ${r[0]}; feed rejected, last good catalog kept`);
     const beat = beats.get(id) ?? {
       id,
       slug: fullSlug.replace(new RegExp(`-${id}$`), ""),
@@ -38,6 +39,7 @@ function toCatalog(rows) {
     beat.prices.push(price);
     const kind = r[1].match(/\((Basic|Premium|Trackout|Unlimited|Exclusive)/);
     if (kind) beat.licenses[kind[1].toLowerCase()] = price;
+    else console.warn(`unknown license on ${r[0]}: ${r[1]}`);
     beats.set(id, beat);
   }
   return [...beats.values()].map(({ prices, ...b }) => ({ ...b, free: prices.every((p) => p === 0) }));

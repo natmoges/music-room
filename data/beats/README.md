@@ -27,3 +27,9 @@ YouTube video, the preview audio, the visualizer.
 - Anything else can be added; the site ignores keys it doesn't know, so tools can attach data.
 
 Add a beat: `npm run beat -- <id>` writes the file with the fields empty. Fill what you know.
+
+## December workflow (new beats)
+1. Upload to BeatStars, download the feed to `data/feed.csv`, run `npm run sync`.
+2. `npm run beat -- <id>` creates `data/beats/<id>.json` as a draft (`"published": false`).
+3. Put the tagged MP3 at `public/previews/<id>.mp3`; fill `youtube`, `bpm`, `key`, `mood`, `tags`.
+4. Set `"published": true`, run `npm run check`. It names anything missing. `npm run build` runs the same check and stops if a beat isn't ready.

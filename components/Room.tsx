@@ -22,7 +22,7 @@
   the glitch and retro effect, and the starfield drifts slow, no streaks. On a phone,
   everything bends toward browsing the catalog and acting on it.
 */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { type Beat, artUrl, readTitle, storeUrl } from "@/lib/catalog";
 import Hyperspace from "./Hyperspace";
 import CrtBoot from "./CrtBoot";
@@ -49,6 +49,7 @@ function track(name: string, data: Record<string, string>) {
 
 export default function Room({ beats, entry, initial, lost = false }: { beats: Beat[]; entry: Entry; initial: Beat | null; lost?: boolean }) {
   const [phase, setPhase] = useState<Phase>("arriving");
+  const launchId = useRef(0);
   const [arrival, setArrival] = useState<number | null>(null);
   const [reduced, setReduced] = useState(false);
   const [selected, setSelected] = useState<Beat | null>(initial);
@@ -96,8 +97,8 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
     document.querySelector('meta[name="robots"]')?.remove();
     document.querySelector('link[rel="canonical"]')?.setAttribute("href", `${location.origin}/beat/${b.id}`);
     track("select_item", { item_id: b.id, item_name: b.title });
-    if (play && b.preview) player.playWhenReady(b.id);
-  }, [player]);
+    if (play && b.preview) { if (b.id === selected?.id) player.toggle(); else player.playWhenReady(b.id); }
+  }, [player, selected]);
 
   const jump = useCallback(() => {
     if (!beats.length) return;
@@ -112,13 +113,14 @@ export default function Room({ beats, entry, initial, lost = false }: { beats: B
   const onLaunch = useCallback((b: Beat, what: string) => {
     player.stop();
     // Counted only when the room actually lets go, so a called-off launch isn't a checkout.
-    const go = () => { track("begin_checkout", { item_id: b.id, item_name: b.title, license: what }); window.location.href = storeUrl(b); };
+    const token = ++launchId.current;
+    const go = () => { if (token !== launchId.current) return; track("begin_checkout", { item_id: b.id, item_name: b.title, license: what }); window.location.href = storeUrl(b); };
     setLaunch({ ms: reduced ? 0 : 900, leaving: true, to: go });
     setPhase("launching");
   }, [reduced, player]);
 
   // A launch can always be called off: tap the light, or press Escape.
-  const cancel = useCallback(() => { setLaunch(null); setPhase("landed"); }, []);
+  const cancel = useCallback(() => { launchId.current++; setLaunch(null); setPhase("landed"); }, []);
 
   useEffect(() => {
     if (phase !== "launching") return;

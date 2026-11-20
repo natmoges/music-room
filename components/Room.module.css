@@ -12,3 +12,6 @@
 }
 .cancel { all: unset; position: fixed; inset: 0; z-index: 50; cursor: pointer; }
 .cancelHint { position: fixed; left: 50%; bottom: 8vh; z-index: 60; transform: translateX(-50%); font: 10px/1 var(--mono); letter-spacing: 0.18em; color: rgba(12, 14, 15, 0.7); text-transform: uppercase; }
+
+.stage > * { min-width: 0; }
+@media (max-width: 760px) { .stage { grid-template-columns: minmax(0, 1fr); } }

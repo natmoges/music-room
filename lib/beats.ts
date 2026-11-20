@@ -38,10 +38,10 @@ function resolvePreview(id: string, given?: string | null): string | null {
 function build(row: FeedRow, file?: BeatFile): Beat {
   return {
     ...row,
-    bpm: file?.bpm ?? null,
-    key: file?.key ?? null,
-    mood: file?.mood ?? [],
-    tags: file?.tags ?? [],
+    bpm: typeof file?.bpm === "number" ? file.bpm : null,
+    key: typeof file?.key === "string" ? file.key : null,
+    mood: Array.isArray(file?.mood) ? file.mood.map(String) : [],
+    tags: Array.isArray(file?.tags) ? file.tags.map(String) : [],
     youtube: file?.youtube ?? null,
     preview: resolvePreview(row.id, file?.preview),
     visualizer: file?.visualizer ?? null,

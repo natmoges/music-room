@@ -2,8 +2,8 @@
 
 /* The HUD: where everything happens. Read the catalog, search it, pick a beat, open the
    liner notes, and launch toward checkout. Lost signal lives here too. */
-import { useMemo, useRef, useState } from "react";
-import { type Beat, artUrl, listenUrl, readTitle } from "@/lib/catalog";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { type Beat, artUrl, listenUrl, readTitle, storeUrl } from "@/lib/catalog";
 import type { Preview } from "./usePreview";
 import { licensesFor, money } from "@/lib/licenses";
 import { LINKS, PRO_ROOM, TUNE_IN } from "@/lib/site";
@@ -27,6 +27,16 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
   const [filter, setFilter] = useState<Filter>("all");
   const [shown, setShown] = useState(PAGE);
   const focusRef = useRef<HTMLElement>(null);
+  const headRef = useRef<HTMLHeadingElement>(null);
+  const wantFocus = useRef(false);
+  // After a pick from the list, bring the tuned card into view once it exists, and move focus to it.
+  useEffect(() => {
+    if (!wantFocus.current || !selected) return;
+    wantFocus.current = false;
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    headRef.current?.focus({ preventScroll: true });
+    focusRef.current?.scrollIntoView({ behavior: still ? "auto" : "smooth", block: "start" });
+  }, [selected]);
 
   const results = useMemo(() => {
     // Every word has to land somewhere: title, artist, mood, tags, BPM or key.
@@ -65,7 +75,7 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
           )}
           <div className={styles.meta}>
             <p className={styles.kicker}>{selected.free ? "FREE DOWNLOAD" : "NOW TUNED"}{selected.bpm ? ` · ${selected.bpm} BPM` : ""}{selected.key ? ` · ${selected.key}` : ""}</p>
-            <h1 className={styles.name}>{sel.name}</h1>
+            <h1 ref={headRef} tabIndex={-1} className={styles.name}>{sel.name}</h1>
             {sel.after && <p className={styles.after}>{sel.after}</p>}
             {player.has ? (
               <div className={styles.player}>
@@ -88,6 +98,7 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
             <button className={styles.launch} onClick={() => onLaunch(selected, "free")}>Take it, free</button>
           ) : (
             <ol className={styles.notes}>
+              {licensesFor(selected.licenses).length === 0 && <li><a className={styles.license} href={storeUrl(selected)}>See licenses on BeatStars ↗</a></li>}
               {licensesFor(selected.licenses).map((l) => (
                 <li key={l.name}>
                   <button className={styles.license} onClick={() => onLaunch(selected, l.name)}>
@@ -122,7 +133,7 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
           const t = readTitle(b.title);
           return (
             <li key={b.id}>
-              <button className={selected?.id === b.id ? styles.rowOn : styles.row} aria-current={selected?.id === b.id ? "true" : undefined} onClick={() => { onSelect(b); focusRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }); }}>
+              <button className={selected?.id === b.id ? styles.rowOn : styles.row} aria-current={selected?.id === b.id ? "true" : undefined} onClick={() => { onSelect(b); wantFocus.current = true; }}>
                 <span className={styles.rname}>{t.name}</span>
                 <span className={styles.rafter}>{t.after}</span>
                 <span className={styles.rtag}>{b.free ? "FREE" : "LEASE"}</span>

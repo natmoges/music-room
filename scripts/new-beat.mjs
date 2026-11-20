@@ -18,7 +18,7 @@ for (const id of ids) {
   }
   const inFeed = catalog.find((b) => b.id === id);
   if (!inFeed) console.warn(`${id}: not in data/catalog.json yet; download the feed and run npm run sync`);
-  const beat = { id, published: true, bpm: null, key: null, mood: [], tags: [], youtube: null, preview: null, visualizer: null, note: "" };
+  const beat = { id, published: false, bpm: null, key: null, mood: [], tags: [], youtube: null, preview: null, visualizer: null, note: "" };
   writeFileSync(file, JSON.stringify(beat, null, 2) + "\n");
   console.log(`${id}: written${inFeed ? ` (${inFeed.title})` : ""}`);
 }
