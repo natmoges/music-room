@@ -1,5 +1,7 @@
 # The NatFTP license ladder
 
+**Current contract: NatFTP Lease v2.1, live on all four paid tiers since Nov 21, 2026** (one shared body; PA law; 10-year term; free downloads covered by the NatFTP Free Download Terms on the store's Terms of Use). The table below matches the store's feature lists and `NEXT` in `lib/licenses.ts`. The rest of this file is the Nov 20 history.
+
 One rule: every tier gives more than the one below it, and "Unlimited" means unlimited.
 Prices stay as they are. No deals.
 
@@ -9,11 +11,12 @@ Prices stay as they are. No deals.
 | Files | Untagged MP3 | MP3 + WAV | MP3 + WAV + stems | MP3 + WAV + stems | MP3 + WAV + stems |
 | Copies | 3,000 | 10,000 | 10,000 | Unlimited | Unlimited |
 | Audio streams | 500,000 | 1,000,000 | 1,000,000 | Unlimited | Unlimited |
-| Music videos | 1 | 1 | 1 | Unlimited | Unlimited |
+| Music videos | 2 (1 monetized, 1 non-monetized) | 2 (1 + 1) | 2 (1 + 1) | Unlimited | Unlimited |
+| Video plays (monetized / non-monetized) | 100,000 / 500,000 | 750,000 / 1,000,000 | 1,000,000 / 1,000,000 | Unlimited | Unlimited |
 | Radio stations | 2 | 2 | 2 | Unlimited | Unlimited |
-| For-profit live shows | Yes | Yes | Yes | Yes | Yes |
+| Live shows | Unlimited, paid and unpaid | same | same | same | same |
 | Credit "Prod. NatFTP" | Required | Required | Required | Required | Required |
-| Ownership | Producer keeps it (lease) | same | same | same | Beat comes off the store |
+| Ownership | You own your recording · Producer keeps the beat · 0% master points · 50/50 publishing | same | same | same | Signed agreement; beat comes off the store; existing leases continue |
 
 **Done on BeatStars, Nov 20, 2026** (Trackout and Unlimited contracts edited; the Basic, WAV and Unlimited feature lists rewritten). What changed: two lines, both in your buyers' favour.
 - Trackout: audio streams 500,000 → **1,000,000**. It was the only tier giving less than the cheaper WAV lease.

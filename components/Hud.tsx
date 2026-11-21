@@ -216,7 +216,7 @@ export default function Hud({ beats, selected, lost, onSelect, onLaunch, onJump,
               {selected.freeDownload && (
                 <li className={styles.freeRow}>
                   <a className={styles.listen} href={storeUrl(selected, "free download")} onClick={() => track("free_download", { item_id: selected.id, item_name: sel.name })}>
-                    Free tagged download (personal use) on BeatStars ↗
+                    Free tagged download (demos and non-monetized posts) on BeatStars ↗
                   </a>
                 </li>
               )}

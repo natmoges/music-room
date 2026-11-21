@@ -10,10 +10,11 @@ export const LICENSES: License[] = [
 ];
 
 // What each contract allows, word for word from the "usage terms" in BeatStars' license picker.
-// LIVE is what the BeatStars contracts say today (read Nov 20, 2026). NEXT is the ladder in
-// docs/LICENSES.md: every tier beats the one below it, and Unlimited really is unlimited.
-// When the contracts on BeatStars match NEXT, change LADDER to "next" and nothing else.
-export const LADDER = "next" as "live" | "next"; // BeatStars contracts updated Nov 20, 2026
+// LIVE is the pre-Nov 20 ladder, kept as record. NEXT mirrors the BeatStars feature lists and
+// NatFTP Lease v2.1 (live on all four tiers Nov 21, 2026): two music videos on capped tiers,
+// unlimited live shows, the buyer owns their recording, 0% master points, 50/50 publishing.
+// If the contracts change again, change NEXT to match the store word for word.
+export const LADDER = "next" as "live" | "next"; // NatFTP Lease v2.1, Nov 21, 2026
 
 const LIVE: Record<string, string[]> = {
   basic: ["Untagged MP3", "Used for music recording", "Distribute up to 3,000 copies", "500,000 online audio streams", "1 music video", "For-profit live performances", "Radio broadcasting rights (2 stations)"],
@@ -24,11 +25,11 @@ const LIVE: Record<string, string[]> = {
 };
 
 const NEXT: Record<string, string[]> = {
-  basic: ["Untagged MP3", "Used for music recording", "Distribute up to 3,000 copies", "500,000 online audio streams", "1 music video", "For-profit live performances", "Radio broadcasting rights (2 stations)", "Credit: Prod. NatFTP"],
-  premium: ["Untagged MP3 + WAV", "Used for music recording", "Distribute up to 10,000 copies", "1,000,000 online audio streams", "1 music video", "For-profit live performances", "Radio broadcasting rights (2 stations)", "Credit: Prod. NatFTP"],
-  trackout: ["Untagged MP3 + WAV + stems", "Used for music recording", "Distribute up to 10,000 copies", "1,000,000 online audio streams", "1 music video", "For-profit live performances", "Radio broadcasting rights (2 stations)", "Credit: Prod. NatFTP"],
-  unlimited: ["Untagged MP3 + WAV + stems", "Used for music recording", "Unlimited copies", "Unlimited online audio streams", "Unlimited music videos", "For-profit live performances", "Radio broadcasting rights (unlimited stations)", "Credit: Prod. NatFTP"],
-  exclusive: ["Price is negotiated: make an offer on BeatStars", "Untagged MP3 + WAV + stems", "Unlimited copies, streams, videos and stations", "The beat comes off the store", "Credit: Prod. NatFTP"],
+  basic: ["Untagged MP3", "Up to 3,000 copies", "500,000 monetized audio streams", "2 music videos (1 monetized, 1 non-monetized)", "100,000 monetized · 500,000 non-monetized video plays", "2 radio stations", "Unlimited live shows", "You own your recording · 0% master points · 50/50 publishing", "Credit: Prod. NatFTP"],
+  premium: ["Untagged MP3 + WAV", "Up to 10,000 copies", "1,000,000 monetized audio streams", "2 music videos (1 monetized, 1 non-monetized)", "750,000 monetized · 1,000,000 non-monetized video plays", "2 radio stations", "Unlimited live shows", "You own your recording · 0% master points · 50/50 publishing", "Credit: Prod. NatFTP"],
+  trackout: ["Untagged MP3 + WAV + stems", "Up to 10,000 copies", "1,000,000 monetized audio streams", "2 music videos (1 monetized, 1 non-monetized)", "1,000,000 monetized · 1,000,000 non-monetized video plays", "2 radio stations", "Unlimited live shows", "You own your recording · 0% master points · 50/50 publishing", "Credit: Prod. NatFTP"],
+  unlimited: ["Untagged MP3 + WAV + stems", "Unlimited copies and audio streams", "Unlimited music videos and video plays", "Unlimited radio stations", "Unlimited live shows", "You own your recording · 0% master points · 50/50 publishing", "Credit: Prod. NatFTP"],
+  exclusive: ["Price is negotiated: make an offer on BeatStars", "Untagged MP3 + WAV + stems", "Exclusive rights from the sale on, set in a signed agreement", "The beat comes off the store", "Existing leases keep running to their end", "Credit: Prod. NatFTP"],
 };
 
 export const TERMS = LADDER === "next" ? NEXT : LIVE;
